@@ -1,0 +1,4867 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="A beautiful, full-featured Bible PWA with study tools, community, and prayer." />
+  <meta name="theme-color" content="#4A90D9" id="theme-color-meta" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Bible PWA" />
+  <link rel="manifest" href="./manifest.json" />
+
+  <title>Bible — Word of God</title>
+
+  <!-- Google Fonts: Google Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Google+Sans+Display:wght@400;500;700&family=Google+Sans+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+
+  <!-- Firebase SDKs (v9 compat mode — CDN, no npm) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+
+  <!-- External Bible Data -->
+  <script src="./bibleData.js"></script>
+
+<style>
+/* =============================================================================
+   MATERIAL DESIGN 3 — CSS CUSTOM PROPERTY SYSTEM
+   ============================================================================= */
+:root {
+  --font-primary: 'Google Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Google Sans Display', 'Google Sans', sans-serif;
+  --font-mono: 'Google Sans Mono', 'Courier New', monospace;
+
+  /* M3 Color Tokens — Light Theme (default) */
+  --md-sys-color-primary: #4A90D9;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #D3E4F7;
+  --md-sys-color-on-primary-container: #00325E;
+  --md-sys-color-secondary: #7C6E8A;
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #EDE0F7;
+  --md-sys-color-on-secondary-container: #2E1C3A;
+  --md-sys-color-tertiary: #6B8E6B;
+  --md-sys-color-on-tertiary: #FFFFFF;
+  --md-sys-color-error: #BA1A1A;
+  --md-sys-color-on-error: #FFFFFF;
+  --md-sys-color-error-container: #FFDAD6;
+  --md-sys-color-background: #F8F9FC;
+  --md-sys-color-on-background: #1A1C20;
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-on-surface: #1A1C20;
+  --md-sys-color-surface-variant: #E2E5ED;
+  --md-sys-color-on-surface-variant: #43474F;
+  --md-sys-color-outline: #73777F;
+  --md-sys-color-outline-variant: #C3C7CF;
+  --md-sys-color-inverse-surface: #2F3136;
+  --md-sys-color-inverse-on-surface: #F0F0F7;
+  --md-sys-color-surface-container-lowest: #FFFFFF;
+  --md-sys-color-surface-container-low: #F2F3F8;
+  --md-sys-color-surface-container: #ECEEF3;
+  --md-sys-color-surface-container-high: #E6E8ED;
+  --md-sys-color-surface-container-highest: #E0E2E8;
+  --md-sys-color-shadow: rgba(0,0,0,0.12);
+
+  /* Accent (user-overridable) */
+  --accent: #4A90D9;
+  --accent-rgb: 74, 144, 217;
+
+  /* Bible-specific tokens */
+  --divine-words-color: #C62828;
+  --highlight-yellow: rgba(255, 213, 0, 0.45);
+  --highlight-mint: rgba(0, 230, 118, 0.35);
+  --highlight-blue: rgba(33, 150, 243, 0.3);
+  --highlight-pink: rgba(233, 30, 99, 0.3);
+
+  /* Typography Scale */
+  --typescale-display-large: clamp(3rem, 5vw, 3.5rem);
+  --typescale-display-medium: clamp(2.5rem, 4vw, 2.8rem);
+  --typescale-display-small: clamp(2rem, 3.5vw, 2.25rem);
+  --typescale-headline-large: clamp(1.75rem, 3vw, 2rem);
+  --typescale-headline-medium: clamp(1.5rem, 2.5vw, 1.75rem);
+  --typescale-headline-small: clamp(1.25rem, 2vw, 1.5rem);
+  --typescale-title-large: 1.375rem;
+  --typescale-title-medium: 1rem;
+  --typescale-title-small: 0.875rem;
+  --typescale-body-large: 1rem;
+  --typescale-body-medium: 0.875rem;
+  --typescale-body-small: 0.75rem;
+  --typescale-label-large: 0.875rem;
+  --typescale-label-medium: 0.75rem;
+  --typescale-label-small: 0.6875rem;
+
+  /* Accessibility overrides */
+  --user-font-size: 1rem;
+  --user-font-weight: 400;
+  --user-line-height: 1.75;
+
+  /* Shape */
+  --md-shape-extra-small: 4px;
+  --md-shape-small: 8px;
+  --md-shape-medium: 12px;
+  --md-shape-large: 16px;
+  --md-shape-extra-large: 28px;
+  --md-shape-full: 9999px;
+
+  /* Elevation (shadows) */
+  --elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+  --elevation-2: 0 3px 6px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.08);
+  --elevation-3: 0 6px 12px rgba(0,0,0,0.10), 0 3px 6px rgba(0,0,0,0.08);
+  --elevation-4: 0 10px 20px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.08);
+
+  /* Transitions */
+  --transition-standard: cubic-bezier(0.2, 0, 0, 1);
+  --transition-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --transition-decelerate: cubic-bezier(0, 0, 0, 1);
+  --transition-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --duration-short: 150ms;
+  --duration-medium: 300ms;
+  --duration-long: 500ms;
+  --duration-extra-long: 700ms;
+}
+
+/* ===================== DARK THEME ===================== */
+[data-theme="dark"] {
+  --md-sys-color-primary: #8DC4F5;
+  --md-sys-color-on-primary: #003260;
+  --md-sys-color-primary-container: #004885;
+  --md-sys-color-on-primary-container: #D3E4F7;
+  --md-sys-color-secondary: #D0BCE0;
+  --md-sys-color-on-secondary: #3B2750;
+  --md-sys-color-secondary-container: #523D67;
+  --md-sys-color-on-secondary-container: #EDE0F7;
+  --md-sys-color-background: #111318;
+  --md-sys-color-on-background: #E2E2E9;
+  --md-sys-color-surface: #1A1C20;
+  --md-sys-color-on-surface: #E2E2E9;
+  --md-sys-color-surface-variant: #43474F;
+  --md-sys-color-on-surface-variant: #C3C7CF;
+  --md-sys-color-outline: #8D9199;
+  --md-sys-color-outline-variant: #43474F;
+  --md-sys-color-inverse-surface: #E2E2E9;
+  --md-sys-color-inverse-on-surface: #2F3136;
+  --md-sys-color-surface-container-lowest: #0D0E13;
+  --md-sys-color-surface-container-low: #1A1C20;
+  --md-sys-color-surface-container: #1E2026;
+  --md-sys-color-surface-container-high: #282A30;
+  --md-sys-color-surface-container-highest: #33353C;
+  --divine-words-color: #FF6B6B;
+}
+
+/* ===================== MIDNIGHT THEME ===================== */
+[data-theme="midnight"] {
+  --md-sys-color-primary: #A5C8FF;
+  --md-sys-color-on-primary: #00306E;
+  --md-sys-color-background: #05070F;
+  --md-sys-color-on-background: #D8DCFF;
+  --md-sys-color-surface: #0A0D1A;
+  --md-sys-color-on-surface: #D8DCFF;
+  --md-sys-color-surface-variant: #222644;
+  --md-sys-color-on-surface-variant: #BBC3F0;
+  --md-sys-color-outline: #646B99;
+  --md-sys-color-outline-variant: #2D3160;
+  --md-sys-color-surface-container-lowest: #03040A;
+  --md-sys-color-surface-container-low: #0A0D1A;
+  --md-sys-color-surface-container: #0F1222;
+  --md-sys-color-surface-container-high: #151929;
+  --md-sys-color-surface-container-highest: #1C2133;
+  --divine-words-color: #FF8A80;
+  --accent: #A5C8FF;
+}
+
+/* ===================== SEPIA THEME ===================== */
+[data-theme="sepia"] {
+  --md-sys-color-primary: #6B4C11;
+  --md-sys-color-on-primary: #FFF8EC;
+  --md-sys-color-primary-container: #F5DDA8;
+  --md-sys-color-background: #F9F3E8;
+  --md-sys-color-on-background: #2C1F05;
+  --md-sys-color-surface: #FDF6E8;
+  --md-sys-color-on-surface: #2C1F05;
+  --md-sys-color-surface-variant: #EFE4CE;
+  --md-sys-color-on-surface-variant: #4A3A1A;
+  --md-sys-color-outline: #8A7050;
+  --md-sys-color-outline-variant: #D4C4A0;
+  --md-sys-color-surface-container-lowest: #FDF6E8;
+  --md-sys-color-surface-container-low: #F6EDD8;
+  --md-sys-color-surface-container: #EFE4CE;
+  --md-sys-color-surface-container-high: #E8D9BC;
+  --md-sys-color-surface-container-highest: #E0CEAC;
+  --divine-words-color: #8B1A1A;
+  --accent: #6B4C11;
+}
+
+/* =============================================================================
+   GLOBAL RESET & BASE STYLES
+   ============================================================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: var(--user-font-size);
+  scroll-behavior: smooth;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  line-height: var(--user-line-height);
+  font-weight: var(--user-font-weight);
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--duration-medium) var(--transition-standard),
+              color var(--duration-medium) var(--transition-standard);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--md-sys-color-outline-variant); border-radius: var(--md-shape-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--md-sys-color-outline); }
+
+/* Material Icons */
+.material-icons-round { font-size: 24px; line-height: 1; vertical-align: middle; user-select: none; }
+
+/* =============================================================================
+   APP SHELL LAYOUT
+   ============================================================================= */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ---- Top App Bar ---- */
+#top-app-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px 0 4px;
+  height: 64px;
+  background: var(--md-sys-color-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: var(--elevation-1);
+  z-index: 100;
+  flex-shrink: 0;
+  transition: background var(--duration-medium) var(--transition-standard);
+}
+
+#top-app-bar .app-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--md-sys-color-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#top-app-bar .app-title span {
+  color: var(--md-sys-color-on-surface);
+  font-weight: 300;
+}
+
+/* ---- Announcement Banner ---- */
+#announcement-banner {
+  display: none;
+  padding: 10px 16px;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-size: var(--typescale-body-medium);
+  font-weight: 500;
+  gap: 8px;
+  align-items: center;
+  z-index: 99;
+  flex-shrink: 0;
+}
+#announcement-banner.visible { display: flex; }
+#announcement-banner .ann-close {
+  margin-left: auto;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+/* ---- Install Banner ---- */
+#install-banner {
+  display: none;
+  padding: 10px 16px;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font-size: var(--typescale-body-medium);
+  font-weight: 500;
+  gap: 8px;
+  align-items: center;
+  z-index: 98;
+  flex-shrink: 0;
+}
+#install-banner.visible { display: flex; }
+
+/* ---- Main Content Area ---- */
+#main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ---- Left Sidebar (Desktop) ---- */
+#left-sidebar {
+  display: none;
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--md-sys-color-surface-container-low);
+  border-right: 1px solid var(--md-sys-color-outline-variant);
+  overflow-y: auto;
+  transition: background var(--duration-medium) var(--transition-standard);
+}
+
+/* ---- View Container ---- */
+#view-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ---- Right Panel (Desktop) ---- */
+#right-panel {
+  display: none;
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--md-sys-color-surface-container-low);
+  border-left: 1px solid var(--md-sys-color-outline-variant);
+  overflow-y: auto;
+  flex-direction: column;
+  transition: background var(--duration-medium) var(--transition-standard);
+}
+
+/* ---- Bottom Navigation ---- */
+#bottom-nav {
+  display: flex;
+  background: var(--md-sys-color-surface);
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+  z-index: 100;
+  flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px 10px;
+  cursor: pointer;
+  gap: 2px;
+  position: relative;
+  transition: color var(--duration-short) var(--transition-standard);
+  color: var(--md-sys-color-on-surface-variant);
+  border: none;
+  background: none;
+  font-family: var(--font-primary);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav-item .nav-indicator {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 32px;
+  border-radius: var(--md-shape-full);
+  background: transparent;
+  transition: background var(--duration-short) var(--transition-standard);
+}
+
+.bottom-nav-item.active .nav-indicator {
+  background: var(--md-sys-color-primary-container);
+}
+
+.bottom-nav-item.active {
+  color: var(--md-sys-color-primary);
+}
+
+.bottom-nav-item .nav-icon {
+  position: relative;
+  z-index: 1;
+}
+
+.bottom-nav-item .nav-label {
+  font-size: var(--typescale-label-medium);
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* ============================================================
+   RESPONSIVE — Desktop/Tablet Breakpoint
+   ============================================================ */
+@media (min-width: 900px) {
+  #left-sidebar { display: block; }
+  #right-panel { display: flex; }
+  #bottom-nav { display: none; }
+  #hamburger-btn { display: none !important; }
+
+  #top-app-bar {
+    padding: 0 16px;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  #left-sidebar { display: none; }
+  #right-panel { display: none; }
+}
+
+/* =============================================================================
+   VIEWS / SCREENS
+   ============================================================================= */
+.view {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  height: 100%;
+}
+.view.active { display: flex; flex-direction: column; }
+
+/* =============================================================================
+   ICON BUTTONS & BUTTONS
+   ============================================================================= */
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--md-shape-full);
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--md-sys-color-on-surface-variant);
+  transition: background var(--duration-short) var(--transition-standard),
+              color var(--duration-short) var(--transition-standard);
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+.icon-btn:hover { background: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-surface); }
+.icon-btn:active { background: rgba(var(--accent-rgb), 0.12); }
+
+.btn-filled {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: var(--md-shape-full);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: var(--typescale-label-large);
+  font-weight: 500;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  box-shadow: var(--elevation-1);
+  transition: box-shadow var(--duration-short), transform var(--duration-short), background var(--duration-short);
+  -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.01em;
+}
+.btn-filled:hover { box-shadow: var(--elevation-2); }
+.btn-filled:active { transform: scale(0.97); }
+
+.btn-tonal {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: var(--md-shape-full);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: var(--typescale-label-large);
+  font-weight: 500;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  transition: background var(--duration-short), transform var(--duration-short);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-tonal:hover { filter: brightness(0.96); }
+.btn-tonal:active { transform: scale(0.97); }
+
+.btn-outlined {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: var(--md-shape-full);
+  border: 1.5px solid var(--md-sys-color-outline);
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: var(--typescale-label-large);
+  font-weight: 500;
+  background: transparent;
+  color: var(--md-sys-color-primary);
+  transition: background var(--duration-short), transform var(--duration-short);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-outlined:hover { background: var(--md-sys-color-primary-container); }
+.btn-outlined:active { transform: scale(0.97); }
+
+.btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: var(--md-shape-full);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: var(--typescale-label-large);
+  font-weight: 500;
+  background: transparent;
+  color: var(--md-sys-color-primary);
+  transition: background var(--duration-short);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-text:hover { background: var(--md-sys-color-primary-container); }
+
+/* =============================================================================
+   CARDS
+   ============================================================================= */
+.card {
+  background: var(--md-sys-color-surface);
+  border-radius: var(--md-shape-large);
+  box-shadow: var(--elevation-1);
+  padding: 16px;
+  transition: background var(--duration-medium) var(--transition-standard),
+              box-shadow var(--duration-short);
+}
+.card:hover { box-shadow: var(--elevation-2); }
+
+.card-outlined {
+  background: var(--md-sys-color-surface);
+  border-radius: var(--md-shape-large);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  padding: 16px;
+  transition: background var(--duration-medium) var(--transition-standard);
+}
+
+/* =============================================================================
+   CHIPS
+   ============================================================================= */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: var(--md-shape-full);
+  font-size: var(--typescale-label-large);
+  font-weight: 500;
+  font-family: var(--font-primary);
+  border: 1.5px solid var(--md-sys-color-outline-variant);
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--duration-short), color var(--duration-short), border-color var(--duration-short);
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.chip.selected {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  border-color: transparent;
+}
+
+/* =============================================================================
+   M3 SWITCH
+   ============================================================================= */
+.m3-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 32px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.m3-switch input { opacity: 0; width: 0; height: 0; }
+.m3-switch-track {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-sys-color-surface-variant);
+  border: 2px solid var(--md-sys-color-outline);
+  transition: background var(--duration-short), border-color var(--duration-short);
+}
+.m3-switch input:checked + .m3-switch-track {
+  background: var(--md-sys-color-primary);
+  border-color: var(--md-sys-color-primary);
+}
+.m3-switch-thumb {
+  position: absolute;
+  top: 50%;
+  left: 6px;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--md-sys-color-outline);
+  transition: left var(--duration-short) var(--transition-emphasized),
+              width var(--duration-short),
+              height var(--duration-short),
+              background var(--duration-short);
+}
+.m3-switch input:checked ~ .m3-switch-thumb {
+  left: 28px;
+  width: 24px;
+  height: 24px;
+  background: var(--md-sys-color-on-primary);
+}
+
+/* =============================================================================
+   MODAL / DRAWER
+   ============================================================================= */
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-medium) var(--transition-standard);
+}
+.scrim.visible { opacity: 1; pointer-events: all; }
+
+.modal-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(320px, 85vw);
+  background: var(--md-sys-color-surface-container-low);
+  z-index: 201;
+  transform: translateX(-100%);
+  transition: transform var(--duration-long) var(--transition-emphasized);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--elevation-4);
+}
+.modal-drawer.open { transform: translateX(0); }
+
+.drawer-header {
+  padding: 20px 16px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  flex-shrink: 0;
+  background: var(--md-sys-color-surface);
+}
+
+.drawer-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+/* =============================================================================
+   BOTTOM SHEET
+   ============================================================================= */
+.bottom-sheet-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-medium) var(--transition-standard);
+}
+.bottom-sheet-scrim.visible { opacity: 1; pointer-events: all; }
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-shape-extra-large) var(--md-shape-extra-large) 0 0;
+  z-index: 301;
+  transform: translateY(100%);
+  transition: transform var(--duration-long) var(--transition-emphasized);
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.bottom-sheet.open { transform: translateY(0); }
+
+.bottom-sheet-handle {
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--md-sys-color-outline-variant);
+  margin: 12px auto 8px;
+  flex-shrink: 0;
+}
+
+.bottom-sheet-content {
+  overflow-y: auto;
+  padding: 8px 20px 32px;
+  flex: 1;
+}
+
+/* =============================================================================
+   DIALOG
+   ============================================================================= */
+.dialog-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-medium) var(--transition-standard);
+}
+.dialog-scrim.visible { opacity: 1; pointer-events: all; }
+
+.dialog {
+  background: var(--md-sys-color-surface-container-high);
+  border-radius: var(--md-shape-extra-large);
+  padding: 24px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--elevation-4);
+  transform: scale(0.9);
+  transition: transform var(--duration-medium) var(--transition-emphasized);
+}
+.dialog-scrim.visible .dialog { transform: scale(1); }
+
+/* =============================================================================
+   SNACKBAR
+   ============================================================================= */
+#snackbar {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--md-sys-color-inverse-surface);
+  color: var(--md-sys-color-inverse-on-surface);
+  padding: 14px 20px;
+  border-radius: var(--md-shape-medium);
+  font-size: var(--typescale-body-medium);
+  font-weight: 500;
+  box-shadow: var(--elevation-3);
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-medium), transform var(--duration-medium);
+  white-space: nowrap;
+  max-width: calc(100vw - 48px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#snackbar.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (min-width: 900px) {
+  #snackbar { bottom: 24px; }
+}
+
+/* =============================================================================
+   FLOATING ACTION BUTTON
+   ============================================================================= */
+.fab {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--elevation-3);
+  z-index: 90;
+  transition: background var(--duration-short), box-shadow var(--duration-short),
+              transform var(--duration-short);
+  -webkit-tap-highlight-color: transparent;
+}
+.fab:hover { box-shadow: var(--elevation-4); transform: scale(1.05); }
+.fab:active { transform: scale(0.97); }
+.fab.speaking {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  animation: pulse-fab 1.5s ease-in-out infinite;
+}
+@keyframes pulse-fab {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.5); }
+  50% { box-shadow: 0 0 0 12px rgba(var(--accent-rgb), 0); }
+}
+@media (min-width: 900px) {
+  .fab { bottom: 32px; right: 340px; }
+}
+
+/* =============================================================================
+   OFFLINE INDICATOR
+   ============================================================================= */
+#offline-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--typescale-label-small);
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: var(--md-shape-full);
+  transition: all var(--duration-medium);
+}
+#offline-indicator.online {
+  color: #2e7d32;
+  background: rgba(46, 125, 50, 0.1);
+}
+#offline-indicator.offline {
+  color: var(--md-sys-color-error);
+  background: var(--md-sys-color-error-container);
+}
+
+/* =============================================================================
+   LOGIN SCREEN
+   ============================================================================= */
+#login-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--md-sys-color-background);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.login-hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.login-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 40px;
+  box-shadow: var(--elevation-3);
+}
+
+.login-card {
+  background: var(--md-sys-color-surface);
+  border-radius: var(--md-shape-extra-large);
+  padding: 32px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--elevation-3);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.google-sign-in-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-radius: var(--md-shape-full);
+  border: 1.5px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background var(--duration-short), box-shadow var(--duration-short);
+  -webkit-tap-highlight-color: transparent;
+  width: 100%;
+}
+.google-sign-in-btn:hover { background: var(--md-sys-color-surface-container-low); box-shadow: var(--elevation-1); }
+.google-sign-in-btn:active { transform: scale(0.98); }
+
+.google-logo {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.last-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--md-shape-large);
+  background: var(--md-sys-color-surface-container);
+  cursor: pointer;
+  transition: background var(--duration-short);
+  border: none;
+  font-family: var(--font-primary);
+  text-align: left;
+  width: 100%;
+}
+.last-user-chip:hover { background: var(--md-sys-color-surface-container-high); }
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--md-sys-color-primary-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--md-sys-color-primary);
+  overflow: hidden;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* =============================================================================
+   HOME VIEW
+   ============================================================================= */
+.home-greeting {
+  padding: 24px 20px 16px;
+  background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-secondary-container));
+  border-radius: 0 0 var(--md-shape-extra-large) var(--md-shape-extra-large);
+}
+
+.home-greeting h2 {
+  font-family: var(--font-display);
+  font-size: var(--typescale-headline-medium);
+  font-weight: 600;
+  color: var(--md-sys-color-on-primary-container);
+  margin-bottom: 4px;
+}
+
+.home-greeting p {
+  font-size: var(--typescale-body-medium);
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0.85;
+}
+
+.home-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.streak-card {
+  background: linear-gradient(135deg, var(--md-sys-color-primary), color-mix(in srgb, var(--md-sys-color-primary) 70%, var(--md-sys-color-secondary)));
+  color: var(--md-sys-color-on-primary);
+  border-radius: var(--md-shape-extra-large);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--elevation-2);
+}
+
+.streak-number {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.votd-card {
+  background: var(--md-sys-color-surface);
+  border-radius: var(--md-shape-extra-large);
+  padding: 20px;
+  box-shadow: var(--elevation-2);
+  border-left: 4px solid var(--md-sys-color-primary);
+}
+
+.votd-reference {
+  font-size: var(--typescale-label-medium);
+  font-weight: 600;
+  color: var(--md-sys-color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.votd-text {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--md-sys-color-on-surface);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.votd-reflection {
+  font-size: var(--typescale-body-medium);
+  color: var(--md-sys-color-on-surface-variant);
+  line-height: 1.6;
+  padding-top: 12px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--typescale-title-large);
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 8px;
+}
+
+.progress-bar-track {
+  height: 8px;
+  background: var(--md-sys-color-surface-variant);
+  border-radius: var(--md-shape-full);
+  overflow: hidden;
+  margin: 6px 0 4px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: var(--md-shape-full);
+  background: var(--md-sys-color-primary);
+  transition: width var(--duration-long) var(--transition-emphasized);
+}
+
+/* =============================================================================
+   BIBLE READER VIEW
+   ============================================================================= */
+#reader-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--md-sys-color-surface-container-low);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.reader-selector {
+  font-family: var(--font-primary);
+  font-size: var(--typescale-label-large);
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface);
+  border: 1.5px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-shape-full);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color var(--duration-short);
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+.reader-selector:focus { border-color: var(--md-sys-color-primary); }
+
+#chapter-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  position: relative;
+}
+
+#chapter-display {
+  padding: 20px 20px 80px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.book-intro-card {
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-secondary-container));
+  border-radius: var(--md-shape-extra-large);
+  padding: 24px;
+  box-shadow: var(--elevation-1);
+}
+
+.chapter-title {
+  font-family: var(--font-display);
+  font-size: var(--typescale-headline-small);
+  font-weight: 600;
+  color: var(--md-sys-color-primary);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.verse-container {
+  display: block;
+  margin-bottom: 4px;
+  padding: 6px 8px;
+  border-radius: var(--md-shape-small);
+  line-height: var(--user-line-height);
+  font-size: var(--user-font-size);
+  font-weight: var(--user-font-weight);
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  transition: background var(--duration-short);
+  position: relative;
+  word-break: break-word;
+}
+.verse-container:hover { background: var(--md-sys-color-surface-container); }
+.verse-container.selected { background: rgba(var(--accent-rgb), 0.15); }
+.verse-container.active-tts { background: rgba(var(--accent-rgb), 0.2); border-left: 3px solid var(--md-sys-color-primary); }
+
+.verse-number {
+  font-size: 0.7em;
+  font-weight: 700;
+  color: var(--md-sys-color-primary);
+  vertical-align: super;
+  margin-right: 4px;
+  user-select: none;
+}
+
+.verse-text {
+  display: inline;
+}
+
+.divine-words { color: var(--divine-words-color); }
+
+/* Study mode indicators */
+.study-mode-active .verse-container {
+  border-bottom: 1px dashed var(--md-sys-color-outline-variant);
+}
+.study-mode-active .verse-container:hover {
+  background: rgba(var(--accent-rgb), 0.08);
+  border-bottom-color: var(--md-sys-color-primary);
+}
+
+/* Highlight classes */
+.hl-yellow { background: var(--highlight-yellow) !important; }
+.hl-mint { background: var(--highlight-mint) !important; }
+.hl-blue { background: var(--highlight-blue) !important; }
+.hl-pink { background: var(--highlight-pink) !important; }
+
+/* Page flip animation */
+@keyframes pageFlipIn {
+  from { opacity: 0; transform: translateX(40px) rotateY(-8deg); }
+  to { opacity: 1; transform: translateX(0) rotateY(0deg); }
+}
+@keyframes pageFlipInReverse {
+  from { opacity: 0; transform: translateX(-40px) rotateY(8deg); }
+  to { opacity: 1; transform: translateX(0) rotateY(0deg); }
+}
+
+.flip-in { animation: pageFlipIn var(--duration-medium) var(--transition-emphasized); }
+.flip-in-reverse { animation: pageFlipInReverse var(--duration-medium) var(--transition-emphasized); }
+
+/* Parallel mode */
+#parallel-container {
+  display: none;
+  flex: 1;
+  overflow: hidden;
+}
+#parallel-container.active {
+  display: flex;
+  gap: 0;
+}
+#parallel-container .parallel-pane {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px 80px;
+  border-right: 1px solid var(--md-sys-color-outline-variant);
+}
+#parallel-container .parallel-pane:last-child { border-right: none; }
+
+/* =============================================================================
+   SIDEBAR BOOK LIST
+   ============================================================================= */
+.sidebar-section-title {
+  font-size: var(--typescale-label-small);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--md-sys-color-on-surface-variant);
+  padding: 12px 16px 4px;
+}
+
+.sidebar-book-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-radius: var(--md-shape-medium);
+  margin: 1px 8px;
+  transition: background var(--duration-short), color var(--duration-short);
+  font-size: var(--typescale-body-medium);
+  color: var(--md-sys-color-on-surface-variant);
+  gap: 8px;
+}
+.sidebar-book-item:hover { background: var(--md-sys-color-surface-container); color: var(--md-sys-color-on-surface); }
+.sidebar-book-item.active {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-weight: 500;
+}
+
+/* =============================================================================
+   COMMUNITY VIEW
+   ============================================================================= */
+.feed-post {
+  background: var(--md-sys-color-surface);
+  border-radius: var(--md-shape-large);
+  padding: 16px;
+  box-shadow: var(--elevation-1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-author {
+  font-weight: 600;
+  font-size: var(--typescale-body-medium);
+  color: var(--md-sys-color-on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-time {
+  font-size: var(--typescale-label-small);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.post-content {
+  font-size: var(--typescale-body-medium);
+  color: var(--md-sys-color-on-surface);
+  line-height: 1.6;
+}
+
+.post-verse-ref {
+  font-size: var(--typescale-label-medium);
+  color: var(--md-sys-color-primary);
+  font-weight: 600;
+  padding: 4px 10px;
+  background: var(--md-sys-color-primary-container);
+  border-radius: var(--md-shape-full);
+  display: inline-block;
+  cursor: pointer;
+}
+
+.post-actions {
+  display: flex;
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+/* Prayer Card */
+.prayer-card {
+  background: var(--md-sys-color-surface);
+  border-radius: var(--md-shape-extra-large);
+  padding: 20px;
+  box-shadow: var(--elevation-1);
+  transition: background var(--duration-medium);
+}
+.prayer-card.praise-report {
+  background: linear-gradient(135deg, #FFF8E1, #FFFDE7);
+  border: 2px solid #F9A825;
+}
+[data-theme="dark"] .prayer-card.praise-report {
+  background: linear-gradient(135deg, #1a1500, #231c00);
+  border-color: #F9A825;
+}
+
+/* =============================================================================
+   PROFILE VIEW
+   ============================================================================= */
+.profile-header {
+  padding: 24px 20px;
+  background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-secondary-container));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-avatar-lg {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  overflow: hidden;
+  box-shadow: var(--elevation-2);
+  cursor: pointer;
+  position: relative;
+}
+
+.profile-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
+
+.profile-name {
+  font-family: var(--font-display);
+  font-size: var(--typescale-title-large);
+  font-weight: 600;
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.profile-email {
+  font-size: var(--typescale-body-medium);
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0.8;
+}
+
+/* =============================================================================
+   SETTINGS PANEL
+   ============================================================================= */
+.settings-section {
+  padding: 16px 20px 8px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+.settings-section:last-child { border-bottom: none; }
+
+.settings-section-title {
+  font-size: var(--typescale-label-large);
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  gap: 16px;
+}
+
+.settings-row-label {
+  font-size: var(--typescale-body-medium);
+  color: var(--md-sys-color-on-surface);
+  font-weight: 500;
+}
+
+.settings-row-sub {
+  font-size: var(--typescale-body-small);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--md-sys-color-outline-variant);
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  cursor: pointer;
+  box-shadow: var(--elevation-1);
+}
+
+.theme-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.theme-btn {
+  padding: 8px 16px;
+  border-radius: var(--md-shape-full);
+  border: 2px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--font-primary);
+  font-size: var(--typescale-label-medium);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--duration-short);
+}
+.theme-btn.active {
+  border-color: var(--md-sys-color-primary);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.color-swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: border-color var(--duration-short), transform var(--duration-short);
+}
+.color-swatch.active {
+  border-color: var(--md-sys-color-on-surface);
+  transform: scale(1.15);
+}
+
+/* =============================================================================
+   SEARCH
+   ============================================================================= */
+#search-container {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  inset: 0;
+  background: var(--md-sys-color-background);
+  z-index: 150;
+}
+#search-container.visible { display: flex; }
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--md-sys-color-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  flex-shrink: 0;
+}
+
+#search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  color: var(--md-sys-color-on-surface);
+  padding: 8px 4px;
+}
+
+#search-results {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px;
+}
+
+.search-result-item {
+  padding: 12px;
+  border-radius: var(--md-shape-medium);
+  cursor: pointer;
+  transition: background var(--duration-short);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+.search-result-item:hover { background: var(--md-sys-color-surface-container); }
+
+/* =============================================================================
+   CONTEXTUAL FLOATING MENU
+   ============================================================================= */
+#contextual-menu {
+  position: fixed;
+  background: var(--md-sys-color-surface-container-highest);
+  border-radius: var(--md-shape-large);
+  box-shadow: var(--elevation-4);
+  z-index: 250;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 200px;
+  animation: fadeScaleIn var(--duration-short) var(--transition-emphasized);
+}
+#contextual-menu.visible { display: flex; }
+
+@keyframes fadeScaleIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.ctx-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-size: var(--typescale-body-medium);
+  color: var(--md-sys-color-on-surface);
+  font-weight: 500;
+  transition: background var(--duration-short);
+  border: none;
+  background: none;
+  font-family: var(--font-primary);
+  width: 100%;
+  text-align: left;
+}
+.ctx-menu-item:hover { background: var(--md-sys-color-surface-container); }
+
+.highlight-colors {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.hl-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform var(--duration-short);
+  border: 2px solid rgba(0,0,0,0.1);
+}
+.hl-dot:hover { transform: scale(1.2); }
+
+/* =============================================================================
+   ADMIN PANEL
+   ============================================================================= */
+.admin-badge {
+  background: var(--md-sys-color-error);
+  color: var(--md-sys-color-on-error);
+  font-size: var(--typescale-label-small);
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--md-shape-full);
+  letter-spacing: 0.05em;
+}
+
+/* =============================================================================
+   UTILITY CLASSES
+   ============================================================================= */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.p-4 { padding: 16px; }
+.p-5 { padding: 20px; }
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-4 { margin-bottom: 16px; }
+.text-primary { color: var(--md-sys-color-primary); }
+.text-muted { color: var(--md-sys-color-on-surface-variant); }
+.text-sm { font-size: var(--typescale-body-small); }
+.text-body { font-size: var(--typescale-body-medium); }
+.font-medium { font-weight: 500; }
+.font-bold { font-weight: 700; }
+.w-full { width: 100%; }
+.rounded-full { border-radius: var(--md-shape-full); }
+.overflow-hidden { overflow: hidden; }
+.hidden { display: none !important; }
+.divider { height: 1px; background: var(--md-sys-color-outline-variant); margin: 8px 0; }
+.text-center { text-align: center; }
+.italic { font-style: italic; }
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     LOGIN SCREEN
+     ============================================================ -->
+<div id="login-screen">
+  <div class="login-hero">
+    <div class="login-icon">
+      <span class="material-icons-round" style="font-size:44px;">menu_book</span>
+    </div>
+    <div>
+      <h1 style="font-family:var(--font-display);font-size:var(--typescale-headline-large);font-weight:700;color:var(--md-sys-color-on-background);text-align:center;">Bible — Word of God</h1>
+      <p style="color:var(--md-sys-color-on-surface-variant);text-align:center;margin-top:6px;">Your complete study companion</p>
+    </div>
+  </div>
+
+  <div class="login-card">
+    <h2 style="font-family:var(--font-display);font-size:var(--typescale-title-large);font-weight:600;">Sign in to continue</h2>
+    <p style="font-size:var(--typescale-body-medium);color:var(--md-sys-color-on-surface-variant);">Your notes, highlights, and reading progress sync across all your devices.</p>
+
+    <button class="google-sign-in-btn" onclick="signInWithGoogle()">
+      <svg class="google-logo" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Sign in with Google
+    </button>
+
+    <div id="last-user-section" style="display:none;">
+      <div class="divider"></div>
+      <p style="font-size:var(--typescale-label-medium);color:var(--md-sys-color-on-surface-variant);margin-bottom:8px;">Previously signed in</p>
+      <button class="last-user-chip" id="last-user-chip" onclick="signInWithGoogle()">
+        <div class="avatar" id="last-user-avatar" style="width:36px;height:36px;font-size:0.875rem;"></div>
+        <div>
+          <div style="font-size:var(--typescale-body-medium);font-weight:500;color:var(--md-sys-color-on-surface);" id="last-user-name">User</div>
+          <div style="font-size:var(--typescale-label-medium);color:var(--md-sys-color-on-surface-variant);" id="last-user-email"></div>
+        </div>
+        <span class="material-icons-round" style="margin-left:auto;color:var(--md-sys-color-on-surface-variant);">chevron_right</span>
+      </button>
+    </div>
+
+    <p style="font-size:var(--typescale-body-small);color:var(--md-sys-color-on-surface-variant);text-align:center;">By signing in, you agree to our Terms of Service and Privacy Policy.</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     APP SHELL
+     ============================================================ -->
+<div id="app" style="display:none;">
+
+  <!-- Announcement Banner -->
+  <div id="announcement-banner">
+    <span class="material-icons-round" style="font-size:18px;">campaign</span>
+    <span id="announcement-text"></span>
+    <button class="ann-close icon-btn" onclick="dismissAnnouncement()" style="width:32px;height:32px;color:var(--md-sys-color-on-primary);">
+      <span class="material-icons-round" style="font-size:18px;">close</span>
+    </button>
+  </div>
+
+  <!-- Install Banner -->
+  <div id="install-banner">
+    <span class="material-icons-round" style="font-size:18px;">install_mobile</span>
+    <span style="flex:1;">Install the Bible app for offline access & push notifications.</span>
+    <button class="btn-tonal" style="padding:6px 16px;font-size:0.75rem;" onclick="triggerInstall()">Install</button>
+    <button class="icon-btn" style="width:32px;height:32px;" onclick="dismissInstallBanner()">
+      <span class="material-icons-round" style="font-size:18px;">close</span>
+    </button>
+  </div>
+
+  <!-- Top App Bar -->
+  <header id="top-app-bar">
+    <button class="icon-btn" id="hamburger-btn" onclick="toggleDrawer()" aria-label="Open menu">
+      <span class="material-icons-round">menu</span>
+    </button>
+    <div class="app-title">Bible <span>— Word of God</span></div>
+    <div id="offline-indicator" class="online">
+      <span class="material-icons-round" style="font-size:14px;" id="offline-icon">cloud_done</span>
+      <span id="offline-text">Online</span>
+    </div>
+    <button class="icon-btn" id="search-btn" onclick="openSearch()" aria-label="Search">
+      <span class="material-icons-round">search</span>
+    </button>
+    <button class="icon-btn" id="notifications-btn" onclick="requestNotificationPermission()" aria-label="Notifications">
+      <span class="material-icons-round">notifications_none</span>
+    </button>
+  </header>
+
+  <!-- Main Content -->
+  <div id="main-content">
+
+    <!-- Left Sidebar -->
+    <nav id="left-sidebar">
+      <div style="padding:12px 16px;font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--md-sys-color-primary);border-bottom:1px solid var(--md-sys-color-outline-variant);">
+        Books of the Bible
+      </div>
+      <div id="sidebar-book-list"></div>
+    </nav>
+
+    <!-- View Container -->
+    <div id="view-container">
+
+      <!-- Search Overlay -->
+      <div id="search-container">
+        <div class="search-bar">
+          <button class="icon-btn" onclick="closeSearch()">
+            <span class="material-icons-round">arrow_back</span>
+          </button>
+          <input type="text" id="search-input" placeholder='Search verses, e.g. "Do not fear" or "John 3:16"' autocomplete="off" />
+          <button class="icon-btn" onclick="clearSearch()">
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+        <div id="search-results"></div>
+      </div>
+
+      <!-- TAB 1: HOME -->
+      <div id="view-home" class="view active">
+        <div class="home-greeting" id="home-greeting">
+          <h2 id="greeting-text">Good morning</h2>
+          <p id="greeting-sub">Ready to dive into the Word?</p>
+        </div>
+        <div class="home-content">
+          <!-- Streak Card -->
+          <div class="streak-card">
+            <div>
+              <div class="streak-number" id="streak-count">0</div>
+              <div style="font-size:var(--typescale-label-large);opacity:0.9;">Day Streak 🔥</div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:var(--typescale-body-medium);opacity:0.9;margin-bottom:8px;">Keep reading daily to maintain your streak!</div>
+              <div id="streak-badges" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+            </div>
+          </div>
+
+          <!-- Verse of the Day -->
+          <div class="votd-card">
+            <div class="votd-reference" id="votd-ref">Loading...</div>
+            <div class="votd-text" id="votd-text" style="font-style:italic;"></div>
+            <div class="votd-reflection" id="votd-reflection"></div>
+            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn-text" style="padding:6px 12px;font-size:0.75rem;" onclick="goToVOTD()">
+                <span class="material-icons-round" style="font-size:16px;">menu_book</span> Read in context
+              </button>
+              <button class="btn-text" style="padding:6px 12px;font-size:0.75rem;" onclick="shareVOTD()">
+                <span class="material-icons-round" style="font-size:16px;">share</span> Share
+              </button>
+            </div>
+          </div>
+
+          <!-- Reading Plans -->
+          <div>
+            <div class="section-title">Reading Plans</div>
+            <div id="reading-plans-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+          </div>
+
+          <!-- Quick Access Books -->
+          <div>
+            <div class="section-title">Popular Books</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;" id="popular-books"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: READ -->
+      <div id="view-read" class="view">
+        <!-- Reader Toolbar -->
+        <div id="reader-toolbar">
+          <button class="icon-btn" id="book-nav-btn" onclick="toggleDrawer()" style="display:flex;">
+            <span class="material-icons-round">library_books</span>
+          </button>
+          <select id="version-select" class="reader-selector" onchange="onVersionChange()">
+            <option value="ESV">ESV</option>
+            <option value="NIV">NIV</option>
+            <option value="NLT">NLT</option>
+            <option value="RSV">RSV</option>
+          </select>
+          <select id="book-select" class="reader-selector" onchange="onBookChange()"></select>
+          <select id="chapter-select" class="reader-selector" onchange="onChapterChange()"></select>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+            <label style="font-size:var(--typescale-label-small);color:var(--md-sys-color-on-surface-variant);font-weight:500;white-space:nowrap;">Study</label>
+            <label class="m3-switch" title="Toggle Deep Study Mode">
+              <input type="checkbox" id="study-mode-toggle" onchange="toggleStudyMode()" />
+              <span class="m3-switch-track"></span>
+              <span class="m3-switch-thumb"></span>
+            </label>
+          </div>
+          <button class="icon-btn" id="parallel-btn" onclick="toggleParallelMode()" title="Parallel Reading Mode" style="display:none;">
+            <span class="material-icons-round">view_column</span>
+          </button>
+        </div>
+
+        <!-- Reader Content -->
+        <div id="chapter-content">
+          <div id="chapter-display"></div>
+          <div id="parallel-container">
+            <div class="parallel-pane" id="parallel-pane-1"></div>
+            <div class="parallel-pane" id="parallel-pane-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: COMMUNITY -->
+      <div id="view-community" class="view">
+        <div style="padding:16px;display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <div style="font-family:var(--font-display);font-size:var(--typescale-title-large);font-weight:600;flex:1;">Community Feed</div>
+            <button class="btn-filled" onclick="openShareNoteDialog()">
+              <span class="material-icons-round" style="font-size:18px;">add</span> Share Note
+            </button>
+          </div>
+          <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;">
+            <button class="chip selected" onclick="filterFeed('all',this)">All</button>
+            <button class="chip" onclick="filterFeed('notes',this)">Notes</button>
+            <button class="chip" onclick="filterFeed('insights',this)">Insights</button>
+          </div>
+          <div id="community-feed" style="display:flex;flex-direction:column;gap:12px;"></div>
+        </div>
+      </div>
+
+      <!-- TAB 4: PROFILE -->
+      <div id="view-profile" class="view">
+        <!-- Profile Header -->
+        <div class="profile-header">
+          <div class="profile-avatar-lg" id="profile-avatar-display" onclick="changeAvatar()">
+            <span id="profile-avatar-letter">?</span>
+          </div>
+          <div style="text-align:center;">
+            <div class="profile-name" id="profile-display-name">User</div>
+            <div class="profile-email" id="profile-email-display"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+            <button class="btn-outlined" style="background:rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.5);color:var(--md-sys-color-on-primary-container);padding:8px 16px;font-size:0.8rem;" onclick="openEditProfileDialog()">
+              <span class="material-icons-round" style="font-size:16px;">edit</span> Edit Profile
+            </button>
+            <button class="btn-outlined" style="background:rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.5);color:var(--md-sys-color-on-primary-container);padding:8px 16px;font-size:0.8rem;" onclick="signOut()">
+              <span class="material-icons-round" style="font-size:16px;">logout</span> Sign Out
+            </button>
+          </div>
+        </div>
+
+        <!-- Install App Button (if not installed) -->
+        <div id="install-profile-section" style="padding:16px;display:none;">
+          <button class="btn-filled w-full" onclick="triggerInstall()" style="justify-content:center;padding:14px;">
+            <span class="material-icons-round">install_mobile</span> Install Bible App
+          </button>
+        </div>
+
+        <!-- Profile Tabs -->
+        <div style="display:flex;gap:0;border-bottom:1px solid var(--md-sys-color-outline-variant);padding:0 16px;overflow-x:auto;">
+          <button class="btn-text" style="padding:12px 16px;border-radius:0;border-bottom:2px solid var(--md-sys-color-primary);color:var(--md-sys-color-primary);" onclick="switchProfileTab('notes',this)" id="profile-tab-notes">My Notes</button>
+          <button class="btn-text" style="padding:12px 16px;border-radius:0;border-bottom:2px solid transparent;color:var(--md-sys-color-on-surface-variant);" onclick="switchProfileTab('highlights',this)" id="profile-tab-highlights">Highlights</button>
+          <button class="btn-text" style="padding:12px 16px;border-radius:0;border-bottom:2px solid transparent;color:var(--md-sys-color-on-surface-variant);" onclick="switchProfileTab('prayer',this)" id="profile-tab-prayer">Prayer Wall</button>
+          <button class="btn-text" style="padding:12px 16px;border-radius:0;border-bottom:2px solid transparent;color:var(--md-sys-color-on-surface-variant);" onclick="switchProfileTab('settings',this)" id="profile-tab-settings">Settings</button>
+          <button class="btn-text hidden" style="padding:12px 16px;border-radius:0;border-bottom:2px solid transparent;color:var(--md-sys-color-error);" onclick="switchProfileTab('admin',this)" id="profile-tab-admin">
+            Admin <span class="admin-badge" style="margin-left:4px;">⚡</span>
+          </button>
+        </div>
+
+        <!-- Profile Tab Content -->
+        <div id="profile-tab-content" style="padding:16px;display:flex;flex-direction:column;gap:12px;flex:1;overflow-y:auto;"></div>
+      </div>
+
+    </div><!-- /view-container -->
+
+    <!-- Right Panel (Desktop) -->
+    <div id="right-panel">
+      <div style="padding:16px 20px;font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--md-sys-color-primary);border-bottom:1px solid var(--md-sys-color-outline-variant);flex-shrink:0;">
+        Study Panel
+      </div>
+      <div id="right-panel-content" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;">
+        <p style="color:var(--md-sys-color-on-surface-variant);font-size:var(--typescale-body-medium);text-align:center;margin-top:40px;">
+          <span class="material-icons-round" style="font-size:48px;display:block;margin-bottom:12px;opacity:0.4;">psychology</span>
+          Enable Study Mode and tap any verse to see deep commentary, word origins, and context.
+        </p>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+
+  <!-- Bottom Navigation -->
+  <nav id="bottom-nav">
+    <button class="bottom-nav-item active" onclick="switchTab('home')" data-tab="home">
+      <div class="nav-indicator"></div>
+      <span class="material-icons-round nav-icon">home</span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchTab('read')" data-tab="read">
+      <div class="nav-indicator"></div>
+      <span class="material-icons-round nav-icon">menu_book</span>
+      <span class="nav-label">Read</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchTab('community')" data-tab="community">
+      <div class="nav-indicator"></div>
+      <span class="material-icons-round nav-icon">people</span>
+      <span class="nav-label">Community</span>
+    </button>
+    <button class="bottom-nav-item" onclick="switchTab('profile')" data-tab="profile">
+      <div class="nav-indicator"></div>
+      <span class="material-icons-round nav-icon">person</span>
+      <span class="nav-label">Profile</span>
+    </button>
+  </nav>
+
+  <!-- TTS FAB -->
+  <button class="fab" id="tts-fab" onclick="toggleTTS()" title="Read aloud" style="display:none;">
+    <span class="material-icons-round" id="tts-icon">volume_up</span>
+  </button>
+
+</div><!-- /app -->
+
+<!-- ============================================================
+     MODAL DRAWER (Book Index)
+     ============================================================ -->
+<div class="scrim" id="drawer-scrim" onclick="closeDrawer()"></div>
+<div class="modal-drawer" id="modal-drawer">
+  <div class="drawer-header">
+    <span class="material-icons-round" style="color:var(--md-sys-color-primary);">library_books</span>
+    <span style="font-family:var(--font-display);font-size:1rem;font-weight:600;">Books of the Bible</span>
+    <button class="icon-btn" onclick="closeDrawer()" style="margin-left:auto;">
+      <span class="material-icons-round">close</span>
+    </button>
+  </div>
+  <div class="drawer-content" id="drawer-book-list"></div>
+</div>
+
+<!-- ============================================================
+     BOTTOM SHEET (Study Commentary / Cross-Refs)
+     ============================================================ -->
+<div class="bottom-sheet-scrim" id="bs-scrim" onclick="closeBottomSheet()"></div>
+<div class="bottom-sheet" id="bottom-sheet">
+  <div class="bottom-sheet-handle"></div>
+  <div class="bottom-sheet-content" id="bottom-sheet-content"></div>
+</div>
+
+<!-- ============================================================
+     DIALOG (Add Note / Edit Profile / Etc.)
+     ============================================================ -->
+<div class="dialog-scrim" id="dialog-scrim" onclick="closeDialog(event)">
+  <div class="dialog" id="dialog-box">
+    <div id="dialog-content"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CONTEXTUAL FLOATING MENU (Verse Actions)
+     ============================================================ -->
+<div id="contextual-menu">
+  <button class="ctx-menu-item" onclick="ctxAddNote()">
+    <span class="material-icons-round" style="color:var(--md-sys-color-primary);">note_add</span> Add Note
+  </button>
+  <button class="ctx-menu-item" onclick="ctxShareNote()">
+    <span class="material-icons-round" style="color:var(--md-sys-color-primary);">share</span> Share to Community
+  </button>
+  <button class="ctx-menu-item" onclick="ctxCopyVerse()">
+    <span class="material-icons-round" style="color:var(--md-sys-color-primary);">content_copy</span> Copy Verse
+  </button>
+  <div class="highlight-colors">
+    <div class="hl-dot" style="background:#FFD700;" onclick="applyHighlight('yellow')" title="Yellow"></div>
+    <div class="hl-dot" style="background:#00E676;" onclick="applyHighlight('mint')" title="Mint Green"></div>
+    <div class="hl-dot" style="background:#2196F3;" onclick="applyHighlight('blue')" title="Light Blue"></div>
+    <div class="hl-dot" style="background:#E91E63;" onclick="applyHighlight('pink')" title="Pink"></div>
+    <div class="hl-dot" style="background:var(--md-sys-color-surface-variant);border:2px dashed var(--md-sys-color-outline);" onclick="applyHighlight('none')" title="Remove Highlight"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SNACKBAR
+     ============================================================ -->
+<div id="snackbar"></div>
+
+<!-- ============================================================
+     MAIN APPLICATION SCRIPT
+     ============================================================ -->
+<script>
+'use strict';
+
+// =============================================================================
+// ██████████████████████████████████████████████████████████████████████████████
+//
+//   🔥🔥🔥  FIREBASE CONFIGURATION — EDIT THIS SECTION 🔥🔥🔥
+//
+//   INSTRUCTIONS:
+//   1. Go to https://console.firebase.google.com
+//   2. Create a new project (or use an existing one)
+//   3. Click "Add App" → choose Web (</>)
+//   4. Copy your firebaseConfig object values below
+//   5. In Firebase Console → Authentication → Sign-in method → Enable "Google"
+//   6. In Firebase Console → Firestore Database → Create database (start in test mode)
+//
+// ██████████████████████████████████████████████████████████████████████████████
+const FIREBASE_CONFIG = {
+  apiKey:            "YOUR_API_KEY_HERE",
+  authDomain:        "YOUR_AUTH_DOMAIN_HERE",
+  projectId:         "YOUR_PROJECT_ID_HERE",
+  storageBucket:     "YOUR_STORAGE_BUCKET_HERE",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID_HERE",
+  appId:             "YOUR_APP_ID_HERE"
+  // measurementId: "YOUR_MEASUREMENT_ID_HERE"  // optional
+};
+// ██████████████████████████████████████████████████████████████████████████████
+//   END FIREBASE CONFIGURATION
+// ██████████████████████████████████████████████████████████████████████████████
+
+// Admin email — change to your admin email
+const ADMIN_EMAIL = 'buenavistaaglinaodanny@gmail.com';
+
+// Profanity word list (auto-moderated)
+const PROFANITY_LIST = ['damn','hell','crap','ass','bastard','bitch','shit','fuck','piss','dick','cock','cunt','whore','slut','fag','nigger','retard'];
+
+// =============================================================================
+// APPLICATION STATE
+// =============================================================================
+const STATE = {
+  // Auth
+  user: null,
+  isAdmin: false,
+
+  // Navigation
+  activeTab: 'home',
+  activeProfileTab: 'notes',
+
+  // Reader
+  currentBook: 'John',
+  currentChapter: 3,
+  currentVersion: 'ESV',
+  parallelVersion: 'NIV',
+  studyMode: false,
+  parallelMode: false,
+
+  // TTS
+  isSpeaking: false,
+  ttsCurrentVerse: null,
+  ttsUtterance: null,
+
+  // Selection
+  selectedVerses: [],
+  lastSelectedVerse: null,
+
+  // UI
+  drawerOpen: false,
+  bottomSheetOpen: false,
+  dialogOpen: false,
+  searchOpen: false,
+
+  // Data
+  notes: {},
+  highlights: {},
+  prayerRequests: [],
+  communityFeed: [],
+  readingStreak: 0,
+  readingPlanProgress: {},
+  announcement: null,
+
+  // PWA
+  deferredInstallPrompt: null,
+  isInstalled: false,
+
+  // Offline
+  isOnline: navigator.onLine,
+
+  // Settings
+  theme: 'light',
+  accentColor: '#4A90D9',
+  fontSize: 1,
+  fontWeight: 400,
+  lineHeight: 1.75,
+
+  // Firebase
+  db: null,
+  auth: null,
+  firebaseReady: false,
+
+  // Hash routing
+  pendingHash: null
+};
+
+// =============================================================================
+// FIREBASE INITIALIZATION
+// =============================================================================
+function initFirebase() {
+  try {
+    if (typeof firebase === 'undefined') {
+      console.warn('[Firebase] Firebase SDK not loaded. Running in demo mode.');
+      STATE.firebaseReady = false;
+      return false;
+    }
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(FIREBASE_CONFIG);
+    }
+
+    STATE.auth = firebase.auth();
+    STATE.db = firebase.firestore();
+
+    // Enable offline persistence
+    STATE.db.enablePersistence({ synchronizeTabs: true })
+      .then(() => console.log('[Firestore] Offline persistence enabled'))
+      .catch(err => {
+        if (err.code === 'failed-precondition') {
+          console.warn('[Firestore] Multiple tabs open, persistence enabled in first tab only');
+        } else if (err.code === 'unimplemented') {
+          console.warn('[Firestore] Offline persistence not supported in this browser');
+        }
+      });
+
+    // Auth state listener
+    STATE.auth.onAuthStateChanged(handleAuthStateChange);
+
+    STATE.firebaseReady = true;
+    console.log('[Firebase] ✅ Initialized successfully');
+    return true;
+  } catch (e) {
+    console.error('[Firebase] Initialization failed:', e);
+    STATE.firebaseReady = false;
+    return false;
+  }
+}
+
+// =============================================================================
+// AUTH FUNCTIONS
+// =============================================================================
+async function signInWithGoogle() {
+  try {
+    if (!STATE.firebaseReady) {
+      // Demo mode: create a fake user
+      simulateDemoLogin();
+      return;
+    }
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await STATE.auth.signInWithPopup(provider);
+  } catch (e) {
+    console.error('[Auth] Sign-in error:', e);
+    if (e.code === 'auth/popup-blocked') {
+      showSnackbar('Popup blocked. Please allow popups for this site.');
+    } else if (e.code === 'auth/cancelled-popup-request') {
+      // User closed the popup - ignore
+    } else {
+      showSnackbar('Sign-in failed. Entering demo mode.');
+      simulateDemoLogin();
+    }
+  }
+}
+
+function simulateDemoLogin() {
+  const demoUser = {
+    uid: 'demo-user-' + Date.now(),
+    displayName: 'Demo User',
+    email: 'demo@example.com',
+    photoURL: null,
+    isDemo: true
+  };
+  handleAuthStateChange(demoUser);
+  showSnackbar('Running in demo mode — Firebase not configured');
+}
+
+function handleAuthStateChange(user) {
+  if (user) {
+    STATE.user = user;
+    STATE.isAdmin = user.email === ADMIN_EMAIL;
+
+    // Save last user to localStorage
+    localStorage.setItem('lastUser', JSON.stringify({
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL
+    }));
+
+    // Show app, hide login
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+
+    // Initialize app
+    initApp();
+    console.log('[Auth] ✅ User signed in:', maskEmail(user.email));
+  } else {
+    STATE.user = null;
+    STATE.isAdmin = false;
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    showLastUserChip();
+  }
+}
+
+async function signOut() {
+  try {
+    if (STATE.firebaseReady && STATE.auth) {
+      await STATE.auth.signOut();
+    } else {
+      handleAuthStateChange(null);
+    }
+    showSnackbar('Signed out successfully');
+  } catch (e) {
+    console.error('[Auth] Sign-out error:', e);
+  }
+}
+
+function showLastUserChip() {
+  const lastUser = JSON.parse(localStorage.getItem('lastUser') || 'null');
+  if (lastUser) {
+    const section = document.getElementById('last-user-section');
+    section.style.display = 'block';
+    document.getElementById('last-user-name').textContent = lastUser.displayName || 'User';
+    document.getElementById('last-user-email').textContent = maskEmail(lastUser.email);
+    const avatarEl = document.getElementById('last-user-avatar');
+    if (lastUser.photoURL) {
+      avatarEl.innerHTML = `<img src="${lastUser.photoURL}" alt="Avatar" onerror="this.parentElement.textContent='${(lastUser.displayName||'U')[0].toUpperCase()}'"/>`;
+    } else {
+      avatarEl.textContent = (lastUser.displayName || 'U')[0].toUpperCase();
+    }
+  }
+}
+
+// =============================================================================
+// EMAIL MASKING (Privacy protection)
+// =============================================================================
+function maskEmail(email) {
+  if (!email || typeof email !== 'string') return '****@****.***';
+  const [local, domain] = email.split('@');
+  if (!domain) return '****@****.***';
+  const maskedLocal = local.length > 1
+    ? local[0] + '*'.repeat(Math.min(local.length - 1, 4))
+    : '*';
+  return `${maskedLocal}@${domain}`;
+}
+
+// =============================================================================
+// APP INITIALIZATION
+// =============================================================================
+function initApp() {
+  loadSettings();
+  updateProfileUI();
+  buildBookLists();
+  loadHomeContent();
+  loadReaderContent();
+  loadCommunityFeed();
+  loadProfileContent();
+  setupSwipeGestures();
+  setupKeyboardNav();
+  checkInstallStatus();
+  loadAnnouncement();
+  setupAdminTab();
+  handleHashNavigation(window.location.hash);
+
+  // Show parallel button on wide screens
+  if (window.innerWidth >= 900) {
+    document.getElementById('parallel-btn').style.display = 'flex';
+  }
+
+  console.log('[App] ✅ Application initialized for user:', maskEmail(STATE.user?.email));
+}
+
+// =============================================================================
+// TAB NAVIGATION
+// =============================================================================
+function switchTab(tab) {
+  if (STATE.activeTab === tab) return;
+  STATE.activeTab = tab;
+
+  // Update views
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const targetView = document.getElementById(`view-${tab}`);
+  if (targetView) targetView.classList.add('active');
+
+  // Update bottom nav
+  document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+
+  // Tab-specific actions
+  if (tab === 'read') {
+    document.getElementById('tts-fab').style.display = 'flex';
+    if (window.innerWidth >= 900) document.getElementById('parallel-btn').style.display = 'flex';
+  } else {
+    document.getElementById('tts-fab').style.display = 'none';
+    stopTTS();
+  }
+
+  if (tab === 'community') loadCommunityFeed();
+  if (tab === 'profile') loadProfileContent();
+}
+
+function switchProfileTab(tab, btn) {
+  STATE.activeProfileTab = tab;
+
+  // Update tab buttons
+  document.querySelectorAll('[id^="profile-tab-"]').forEach(b => {
+    if (b.id !== 'profile-tab-admin') {
+      b.style.borderBottomColor = 'transparent';
+      b.style.color = 'var(--md-sys-color-on-surface-variant)';
+    }
+  });
+  if (btn) {
+    btn.style.borderBottomColor = tab === 'admin'
+      ? 'var(--md-sys-color-error)'
+      : 'var(--md-sys-color-primary)';
+    btn.style.color = tab === 'admin'
+      ? 'var(--md-sys-color-error)'
+      : 'var(--md-sys-color-primary)';
+  }
+
+  loadProfileContent();
+}
+
+// =============================================================================
+// BOOK & SIDEBAR LISTS
+// =============================================================================
+function buildBookLists() {
+  if (!window.BIBLE_DATA) return;
+
+  const { OT, NT } = window.BIBLE_DATA.books;
+
+  function buildBookItems(books) {
+    return books.map(book =>
+      `<div class="sidebar-book-item ${book === STATE.currentBook ? 'active' : ''}"
+            onclick="selectBook('${book.replace(/'/g,"\\'")}')">
+        ${book}
+      </div>`
+    ).join('');
+  }
+
+  const html = `
+    <div class="sidebar-section-title">Old Testament</div>
+    ${buildBookItems(OT)}
+    <div class="sidebar-section-title">New Testament</div>
+    ${buildBookItems(NT)}
+  `;
+
+  const sidebarEl = document.getElementById('sidebar-book-list');
+  const drawerEl = document.getElementById('drawer-book-list');
+  if (sidebarEl) sidebarEl.innerHTML = html;
+  if (drawerEl) drawerEl.innerHTML = html;
+
+  // Populate book select dropdown
+  const bookSelect = document.getElementById('book-select');
+  if (bookSelect) {
+    bookSelect.innerHTML = '';
+    [...OT, ...NT].forEach(book => {
+      const opt = document.createElement('option');
+      opt.value = book;
+      opt.textContent = book;
+      if (book === STATE.currentBook) opt.selected = true;
+      bookSelect.appendChild(opt);
+    });
+  }
+
+  updateChapterSelect();
+}
+
+function selectBook(book) {
+  STATE.currentBook = book;
+  STATE.currentChapter = 1;
+  closeDrawer();
+  updateBookSelect();
+  updateChapterSelect();
+  renderChapter();
+  if (STATE.activeTab !== 'read') switchTab('read');
+}
+
+function updateBookSelect() {
+  const sel = document.getElementById('book-select');
+  if (sel) sel.value = STATE.currentBook;
+  // Update sidebar active state
+  document.querySelectorAll('.sidebar-book-item').forEach(el => {
+    el.classList.toggle('active', el.textContent.trim() === STATE.currentBook);
+  });
+}
+
+function updateChapterSelect() {
+  const sel = document.getElementById('chapter-select');
+  if (!sel || !window.BIBLE_DATA) return;
+  const count = window.BIBLE_DATA.chapterCounts[STATE.currentBook] || 1;
+  sel.innerHTML = '';
+  for (let i = 1; i <= count; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `Ch ${i}`;
+    if (i === STATE.currentChapter) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function onBookChange() {
+  STATE.currentBook = document.getElementById('book-select').value;
+  STATE.currentChapter = 1;
+  updateBookSelect();
+  updateChapterSelect();
+  renderChapter();
+}
+
+function onChapterChange() {
+  STATE.currentChapter = parseInt(document.getElementById('chapter-select').value, 10);
+  renderChapter();
+}
+
+function onVersionChange() {
+  STATE.currentVersion = document.getElementById('version-select').value;
+  renderChapter();
+}
+
+// =============================================================================
+// CHAPTER RENDERING
+// =============================================================================
+function renderChapter(direction = 'none') {
+  if (!window.BIBLE_DATA) {
+    document.getElementById('chapter-display').innerHTML =
+      '<p style="padding:20px;color:var(--md-sys-color-on-surface-variant);">Bible data loading...</p>';
+    return;
+  }
+
+  const { book, chapter, version } = {
+    book: STATE.currentBook,
+    chapter: STATE.currentChapter,
+    version: STATE.currentVersion
+  };
+
+  const chapterData = window.BIBLE_DATA.versions[version]?.[book]?.[chapter];
+  const intro = window.BIBLE_DATA.intros[book];
+
+  let html = '';
+
+  // Book Introduction (Chapter 1 only)
+  if (chapter === 1 && intro) {
+    html += `
+      <div class="book-intro-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span class="material-icons-round" style="color:var(--md-sys-color-primary);">info</span>
+          <span style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--md-sys-color-on-primary-container);">Introduction: ${book}</span>
+        </div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;">
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <span style="font-size:var(--typescale-label-small);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--md-sys-color-on-primary-container);opacity:0.8;">Author</span>
+            <span style="font-size:var(--typescale-body-medium);color:var(--md-sys-color-on-primary-container);">${intro.author}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <span style="font-size:var(--typescale-label-small);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--md-sys-color-on-primary-container);opacity:0.8;">Date</span>
+            <span style="font-size:var(--typescale-body-medium);color:var(--md-sys-color-on-primary-container);">${intro.date}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <span style="font-size:var(--typescale-label-small);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--md-sys-color-on-primary-container);opacity:0.8;">Theme</span>
+            <span style="font-size:var(--typescale-body-medium);color:var(--md-sys-color-on-primary-container);">${intro.theme}</span>
+          </div>
+        </div>
+        <p style="font-size:var(--typescale-body-medium);color:var(--md-sys-color-on-primary-container);line-height:1.7;opacity:0.9;">${intro.context}</p>
+      </div>`;
+  }
+
+  // Chapter Title
+  html += `<div class="chapter-title">${book} — Chapter ${chapter} <span style="font-weight:300;font-size:0.875rem;">${version}</span></div>`;
+
+  if (!chapterData) {
+    html += `
+      <div style="text-align:center;padding:40px 20px;color:var(--md-sys-color-on-surface-variant);">
+        <span class="material-icons-round" style="font-size:64px;display:block;margin-bottom:16px;opacity:0.3;">menu_book</span>
+        <p style="font-family:var(--font-display);font-size:1.1rem;font-weight:500;margin-bottom:8px;">${book} ${chapter} — ${version}</p>
+        <p style="font-size:var(--typescale-body-medium);">This chapter's text will appear here when loaded from the full bibleData.js dataset.<br><br>The sample data includes key chapters from Genesis, John, Psalms, Romans, and Philippians.<br>Expand bibleData.js with the complete Bible text to unlock all chapters.</p>
+        <div style="margin-top:20px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn-tonal" onclick="prevChapter()">
+            <span class="material-icons-round" style="font-size:18px;">chevron_left</span> Previous
+          </button>
+          <button class="btn-filled" onclick="nextChapter()">
+            Next <span class="material-icons-round" style="font-size:18px;">chevron_right</span>
+          </button>
+        </div>
+      </div>`;
+  } else {
+    // Render verses
+    Object.entries(chapterData).forEach(([verseNum, text]) => {
+      const verseKey = `${book}-${chapter}-${verseNum}`;
+      const isDivine = window.BIBLE_DATA.divineWords?.[verseKey];
+      const highlight = STATE.highlights[verseKey];
+      const hasNote = !!STATE.notes[verseKey];
+      const hlClass = highlight ? `hl-${highlight}` : '';
+
+      html += `
+        <div class="verse-container ${hlClass}"
+             id="verse-${verseNum}"
+             data-verse="${verseNum}"
+             data-key="${verseKey}"
+             onclick="onVerseClick(event, ${verseNum})"
+             oncontextmenu="onVerseRightClick(event, ${verseNum})">
+          <span class="verse-number">${verseNum}</span>
+          <span class="verse-text ${isDivine ? 'divine-words' : ''}">${text}</span>
+          ${hasNote ? `<span class="material-icons-round" style="font-size:14px;color:var(--md-sys-color-primary);vertical-align:middle;margin-left:4px;" title="Note attached">sticky_note_2</span>` : ''}
+          ${window.BIBLE_DATA.crossRefs?.[verseKey] ? `<span class="material-icons-round" style="font-size:12px;color:var(--md-sys-color-tertiary);vertical-align:middle;margin-left:2px;cursor:pointer;" onclick="event.stopPropagation();showCrossRefs('${verseKey}')" title="Cross-references">compare_arrows</span>` : ''}
+        </div>`;
+    });
+
+    // Chapter Navigation
+    const totalChapters = window.BIBLE_DATA.chapterCounts[STATE.currentBook] || 1;
+    html += `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding-top:16px;border-top:1px solid var(--md-sys-color-outline-variant);">
+        <button class="btn-tonal" onclick="prevChapter()" ${STATE.currentChapter === 1 ? 'disabled style="opacity:0.4;"' : ''}>
+          <span class="material-icons-round" style="font-size:18px;">chevron_left</span> Previous
+        </button>
+        <span style="font-size:var(--typescale-label-medium);color:var(--md-sys-color-on-surface-variant);">${chapter} / ${totalChapters}</span>
+        <button class="btn-filled" onclick="nextChapter()">
+          Next <span class="material-icons-round" style="font-size:18px;">chevron_right</span>
+        </button>
+      </div>`;
+  }
+
+  const display = document.getElementById('chapter-display');
+  if (display) {
+    // Apply page flip animation
+    if (direction === 'next') display.classList.add('flip-in');
+    else if (direction === 'prev') display.classList.add('flip-in-reverse');
+
+    display.innerHTML = html;
+
+    // Remove animation class after it completes
+    display.addEventListener('animationend', () => {
+      display.classList.remove('flip-in', 'flip-in-reverse');
+    }, { once: true });
+  }
+
+  // Apply study mode class
+  const content = document.getElementById('chapter-content');
+  if (content) content.classList.toggle('study-mode-active', STATE.studyMode);
+
+  // Update URL hash
+  history.replaceState(null, '', `#${book.replace(/\s+/g, '-')}-${chapter}`);
+
+  // Also render parallel if active
+  if (STATE.parallelMode) renderParallel();
+
+  // Update selects
+  updateBookSelect();
+  updateChapterSelect();
+}
+
+function nextChapter() {
+  const totalChapters = window.BIBLE_DATA?.chapterCounts[STATE.currentBook] || 1;
+  if (STATE.currentChapter < totalChapters) {
+    STATE.currentChapter++;
+    updateChapterSelect();
+    renderChapter('next');
+    document.getElementById('chapter-content').scrollTop = 0;
+  } else {
+    // Go to next book
+    const allBooks = window.BIBLE_DATA?.books.all || [];
+    const idx = allBooks.indexOf(STATE.currentBook);
+    if (idx < allBooks.length - 1) {
+      STATE.currentBook = allBooks[idx + 1];
+      STATE.currentChapter = 1;
+      updateBookSelect();
+      updateChapterSelect();
+      renderChapter('next');
+      document.getElementById('chapter-content').scrollTop = 0;
+      showSnackbar(`Now reading: ${STATE.currentBook}`);
+    }
+  }
+  markReadingProgress();
+}
+
+function prevChapter() {
+  if (STATE.currentChapter > 1) {
+    STATE.currentChapter--;
+    updateChapterSelect();
+    renderChapter('prev');
+    document.getElementById('chapter-content').scrollTop = 0;
+  } else {
+    // Go to prev book
+    const allBooks = window.BIBLE_DATA?.books.all || [];
+    const idx = allBooks.indexOf(STATE.currentBook);
+    if (idx > 0) {
+      STATE.currentBook = allBooks[idx - 1];
+      STATE.currentChapter = window.BIBLE_DATA?.chapterCounts[STATE.currentBook] || 1;
+      updateBookSelect();
+      updateChapterSelect();
+      renderChapter('prev');
+      document.getElementById('chapter-content').scrollTop = 0;
+      showSnackbar(`Now reading: ${STATE.currentBook}`);
+    }
+  }
+}
+
+// =============================================================================
+// VERSE CLICK HANDLERS
+// =============================================================================
+function onVerseClick(event, verseNum) {
+  // Ignore if text is selected
+  if (window.getSelection().toString().trim().length > 0) return;
+
+  event.stopPropagation();
+  STATE.lastSelectedVerse = verseNum;
+
+  if (STATE.studyMode) {
+    // Study mode: open commentary
+    const verseKey = `${STATE.currentBook}-${STATE.currentChapter}-${verseNum}`;
+    showVerseCommentary(verseKey, verseNum);
+  } else {
+    // Normal mode: show contextual menu
+    toggleVerseSelection(verseNum);
+    showContextualMenu(event.clientX, event.clientY, verseNum);
+  }
+}
+
+function onVerseRightClick(event, verseNum) {
+  event.preventDefault();
+  STATE.lastSelectedVerse = verseNum;
+  toggleVerseSelection(verseNum);
+  showContextualMenu(event.clientX, event.clientY, verseNum);
+}
+
+function toggleVerseSelection(verseNum) {
+  const el = document.getElementById(`verse-${verseNum}`);
+  if (!el) return;
+
+  const idx = STATE.selectedVerses.indexOf(verseNum);
+  if (idx > -1) {
+    STATE.selectedVerses.splice(idx, 1);
+    el.classList.remove('selected');
+  } else {
+    STATE.selectedVerses.push(verseNum);
+    el.classList.add('selected');
+  }
+}
+
+function clearVerseSelection() {
+  STATE.selectedVerses.forEach(v => {
+    const el = document.getElementById(`verse-${v}`);
+    if (el) el.classList.remove('selected');
+  });
+  STATE.selectedVerses = [];
+}
+
+// =============================================================================
+// CONTEXTUAL MENU
+// =============================================================================
+function showContextualMenu(x, y, verseNum) {
+  const menu = document.getElementById('contextual-menu');
+  const margin = 16;
+  const menuW = 220;
+  const menuH = 200;
+
+  let left = Math.min(x, window.innerWidth - menuW - margin);
+  let top = Math.min(y, window.innerHeight - menuH - margin);
+
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
+  menu.classList.add('visible');
+}
+
+function closeContextualMenu() {
+  document.getElementById('contextual-menu').classList.remove('visible');
+}
+
+function ctxAddNote() {
+  closeContextualMenu();
+  const verseKey = `${STATE.currentBook}-${STATE.currentChapter}-${STATE.lastSelectedVerse}`;
+  openAddNoteDialog(verseKey);
+}
+
+function ctxShareNote() {
+  closeContextualMenu();
+  const verseKey = `${STATE.currentBook}-${STATE.currentChapter}-${STATE.lastSelectedVerse}`;
+  openShareNoteDialog(verseKey);
+}
+
+function ctxCopyVerse() {
+  closeContextualMenu();
+  const chapterData = window.BIBLE_DATA?.versions[STATE.currentVersion]?.[STATE.currentBook]?.[STATE.currentChapter];
+  if (chapterData && STATE.lastSelectedVerse) {
+    const text = `${chapterData[STATE.lastSelectedVerse]} — ${STATE.currentBook} ${STATE.currentChapter}:${STATE.lastSelectedVerse} (${STATE.currentVersion})`;
+    navigator.clipboard.writeText(text).then(() => showSnackbar('Verse copied to clipboard!'));
+  }
+  clearVerseSelection();
+}
+
+function applyHighlight(color) {
+  closeContextualMenu();
+  const versesToHL = STATE.selectedVerses.length > 0
+    ? [...STATE.selectedVerses]
+    : [STATE.lastSelectedVerse];
+
+  versesToHL.forEach(v => {
+    if (!v) return;
+    const verseKey = `${STATE.currentBook}-${STATE.currentChapter}-${v}`;
+    const el = document.getElementById(`verse-${v}`);
+    if (!el) return;
+
+    // Remove existing highlight classes
+    el.classList.remove('hl-yellow', 'hl-mint', 'hl-blue', 'hl-pink');
+
+    if (color === 'none') {
+      delete STATE.highlights[verseKey];
+    } else {
+      STATE.highlights[verseKey] = color;
+      el.classList.add(`hl-${color}`);
+    }
+  });
+
+  saveHighlights();
+  clearVerseSelection();
+  showSnackbar(color === 'none' ? 'Highlight removed' : 'Highlight applied');
+}
+
+function saveHighlights() {
+  localStorage.setItem('bible_highlights', JSON.stringify(STATE.highlights));
+}
+
+function loadHighlights() {
+  try {
+    STATE.highlights = JSON.parse(localStorage.getItem('bible_highlights') || '{}');
+  } catch {
+    STATE.highlights = {};
+  }
+}
+
+// =============================================================================
+// STUDY MODE & COMMENTARY
+// =============================================================================
+function toggleStudyMode() {
+  STATE.studyMode = document.getElementById('study-mode-toggle').checked;
+  const content = document.getElementById('chapter-content');
+  if (content) content.classList.toggle('study-mode-active', STATE.studyMode);
+  showSnackbar(STATE.studyMode ? '📖 Deep Study Mode ON — tap any verse' : 'Study Mode OFF');
+
+  if (!STATE.studyMode) {
+    const rightPanel = document.getElementById('right-panel-content');
+    if (rightPanel) {
+      rightPanel.innerHTML = `
+        <p style="color:var(--md-sys-color-on-surface-variant);font-size:var(--typescale-body-medium);text-align:center;margin-top:40px;">
+          <span class="material-icons-round" style="font-size:48px;display:block;margin-bottom:12px;opacity:0.4;">psychology</span>
+          Enable Study Mode and tap any verse to see deep commentary, word origins, and context.
+        </p>`;
+    }
+  }
+}
+
+function showVerseCommentary(verseKey, verseNum) {
+  const commentary = window.BIBLE_DATA?.commentary?.[verseKey];
+  const chapterData = window.BIBLE_DATA?.versions[STATE.currentVersion]?.[STATE.currentBook]?.[STATE.currentChapter];
+  const verseText = chapterData?.[verseNum] || '';
+  const crossRefs = window.BIBLE_DATA?.crossRefs?.[verseKey] || [];
+
+  const bookKey = `${STATE.currentBook} ${STATE.currentChapter}:${verseNum}`;
+
+  const contentHtml = commentary ? `
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="padding:16px;background:var(--md-sys-color-primary-container);border-radius:var(--md-shape-large);">
+        <div style="font-size:var(--typescale-label-medium);font-weight:700;color:var(--md-sys-color-primary);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">${bookKey} (${STATE.currentVersion})</div>
+        <div style="font-family:var(--font-display);font-style:italic;font-size:1rem;color:var(--md-sys-color-on-primary-container);line-height:1.6;">"${verseText}"</div>
+      </div>
+
+      <div>
+        <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--md-sys-color-on-surface);margin-bottom:8px;">📌 ${commentary.title}</div>
+        <p style="font-size:var(--typescale-body-medium);color:var(--md-sys-color-on-surface);line-height:1.75;">${commentary.explanation}</p>
+      </div>
+
+      ${commentary.wordOrigins?.length ? `
+      <div style="background:var(--md-sys-color-surface-container);border-radius:var(--md-shape-large);padding:16px;">
+        <div style="font-family:var(--font-display);font-weight:600;font-size:0.95rem;margin-bottom:10px;">🔤 Word Origins & Hebrew/Greek</div>
+        ${commentary.wordOrigins.map(w => `
+          <div style="margin-bottom:10px;padding-left:12px;border-left:3px solid var(--md-sys-color-primary);">
+            <div style="font-weight:600;font-size:var(--typescale-body-medium);color:var(--md-sys-color-primary);">${w.word}</div>
+            <div style="font-size:var(--typescale-body-small);color:var(--md-sys-color-on-surface-variant);line-height:1.5;margin-top:2px;">${w.origin}</div>
+          </div>`).join('')}
+      </div>` : ''}
+
+      ${commentary.context ? `
+      <div>
+        <div style="font-family:var(--font-display);font-weight:600;font-size:0.95rem;margin-bottom:8px;">📜 Historical Context</div>
+        <p style="font-size:var(--typescale-body-medium);color:var(--md-sys-color-on-surface-variant);line-height:1.7;">${commentary.context}</p>
+      </div>` : ''}
+
+      ${crossRefs.length ? `
+      <div>
+        <div style="font-family:var(--font-display);font-weight:600;font-size:0.95rem;margin-bottom:8px;">🔗 Cross References</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${crossRefs.map(ref => {
+            const parts = ref.split('-');
+            const refBook = parts.slice(0, parts.length - 2).join(' ');
+            const refCh = parts[parts.length - 2];
+            const refV = parts[parts.length - 1];
+            return `<span class="post-verse-ref" onclick="selectBook('${refBook}');STATE.currentChapter=${refCh};updateChapterSelect();renderChapter();closeBottomSheet();">${refBook} ${refCh}:${refV}</span>`;
+          }).join('')}
+        </div>
+      </div>` : ''}
+    </div>` : `
+    <div style="text-align:center;padding:24px;color:var(--md-sys-color-on-surface-variant);">
+      <span class="material-icons-round" style="font-size:48px;display:block;margin-bottom:12px;opacity:0.4;">auto_stories</span>
+      <p style="font-family:var(--font-display);font-size:1rem;font-weight:500;margin-bottom:8px;">${bookKey}</p>
+      <p style="font-size:var(--typescale-body-medium);font-style:italic;line-height:1.6;">"${verseText}"</p>
+      <p style="margin-top:16px;font-size:var(--typescale-body-small);">Detailed commentary for this verse will appear here when added to bibleData.js.</p>
+    </div>`;
+
+  // On desktop — show in right panel
+  if (window.innerWidth >= 900) {
+    const rightPanel = document.getElementById('right-panel-content');
+    if (rightPanel) {
+      rightPanel.innerHTML = contentHtml;
+    }
+  } else {
+    // On mobile — bottom sheet
+    openBottomSheet(contentHtml);
+  }
+}
+
+function showCrossRefs(verseKey) {
+  const crossRefs = window.BIBLE_DATA?.crossRefs?.[verseKey] || [];
+  if (!crossRefs.length) { showSnackbar('No cross-references for this verse'); return; }
+
+  const bookParts = verseKey.split('-');
+  const refLabel = bookParts.slice(0, -2).join(' ') + ' ' + bookParts.slice(-2).join(':');
+
+  const html = `
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;">Cross References — ${refLabel}</div>
+      ${crossRefs.map(ref => {
+        const parts = ref.split('-');
+        const refBook = parts.slice(0, parts.length - 2).join(' ');
+        const refCh = parseInt(parts[parts.length - 2]);
+        const refV = parseInt(parts[parts.length - 1]);
+        const text = window.BIBLE_DATA?.versions[STATE.currentVersion]?.[refBook]?.[refCh]?.[refV];
+        return `<div style="padding:12px;background:var(--md-sys-color-surface-container);border-radius:var(--md-shape-medium);">
+          <div style="font-size:var(--typescale-label-medium);font-weight:700;color:var(--md-sys-color-primary);margin-bottom:6px;">${refBook} ${refCh}:${refV}</div>
+          <div style="font-size:var(--typescale-body-medium);font-style:italic;line-height:1.6;">${text || '[Text not available in sample data]'}</div>
+          <button class="btn-text" style="margin-top:6px;padding:4px 8px;font-size:0.75rem;" onclick="selectBook('${refBook}');STATE.currentChapter=${refCh};updateChapterSelect();renderChapter();closeBottomSheet();">Go to verse →</button>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  openBottomSheet(html);
+}
+
+// =============================================================================
+// PARALLEL READING MODE
+// =============================================================================
+function toggleParallelMode() {
+  STATE.parallelMode = !STATE.parallelMode;
+  const container = document.getElementById('parallel-container');
+  const display = document.getElementById('chapter-display');
+  const btn = document.getElementById('parallel-btn');
+
+  if (STATE.parallelMode) {
+    display.style.display = 'none';
+    container.classList.add('active');
+    btn.style.background = 'var(--md-sys-color-primary-container)';
+    renderParallel();
+    showSnackbar('Parallel mode: ' + STATE.currentVersion + ' | ' + STATE.parallelVersion);
+  } else {
+    display.style.display = '';
+    container.classList.remove('active');
+    btn.style.background = '';
+    renderChapter();
+  }
+}
+
+function renderParallel() {
+  const pane1 = document.getElementById('parallel-pane-1');
+  const pane2 = document.getElementById('parallel-pane-2');
+  if (!pane1 || !pane2) return;
+
+  function renderPane(version) {
+    const chapterData = window.BIBLE_DATA?.versions[version]?.[STATE.currentBook]?.[STATE.currentChapter];
+    let html = `<div style="font-family:var(--font-display);font-weight:700;font-size:0.9rem;color:var(--md-sys-color-primary);margin-bottom:16px;text-align:center;">${version}</div>`;
+    if (!chapterData) {
+      html += `<p style="color:var(--md-sys-color-on-surface-variant);font-size:var(--typescale-body-medium);text-align:center;padding:20px;">No text available for ${STATE.currentBook} ${STATE.currentChapter} in ${version}</p>`;
+    } else {
+      Object.entries(chapterData).forEach(([v, text]) => {
+        const isDivine = window.BIBLE_DATA?.divineWords?.[`${STATE.currentBook}-${STATE.currentChapter}-${v}`];
+        html += `<div style="margin-bottom:8px;padding:4px 0;line-height:var(--user-line-height);font-size:var(--user-font-size);">
+          <span style="font-size:0.7em;font-weight:700;color:var(--md-sys-color-primary);vertical-align:super;margin-right:4px;">${v}</span>
+          <span ${isDivine ? 'class="divine-words"' : ''}>${text}</span>
+        </div>`;
+      });
+    }
+    return html;
+  }
+
+  pane1.innerHTML = renderPane(STATE.currentVersion);
+  pane2.innerHTML = renderPane(STATE.parallelVersion);
+}
+
+// =============================================================================
+// TEXT-TO-SPEECH (TTS / Audio Bible)
+// =============================================================================
+function toggleTTS() {
+  if (STATE.isSpeaking) {
+    stopTTS();
+  } else {
+    startTTS();
+  }
+}
+
+function startTTS() {
+  if (!window.speechSynthesis) {
+    showSnackbar('Text-to-Speech not supported in this browser');
+    return;
+  }
+
+  const chapterData = window.BIBLE_DATA?.versions[STATE.currentVersion]?.[STATE.currentBook]?.[STATE.currentChapter];
+  if (!chapterData) {
+    showSnackbar('No text available to read');
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+  const verses = Object.entries(chapterData);
+  STATE.isSpeaking = true;
+  STATE.ttsCurrentVerse = 0;
+
+  const fab = document.getElementById('tts-fab');
+  const icon = document.getElementById('tts-icon');
+  fab.classList.add('speaking');
+  icon.textContent = 'stop';
+
+  function speakVerse(idx) {
+    if (idx >= verses.length || !STATE.isSpeaking) {
+      stopTTS();
+      return;
+    }
+
+    const [verseNum, text] = verses[idx];
+    STATE.ttsCurrentVerse = verseNum;
+
+    // Highlight active verse
+    document.querySelectorAll('.verse-container').forEach(el => el.classList.remove('active-tts'));
+    const activeEl = document.getElementById(`verse-${verseNum}`);
+    if (activeEl) {
+      activeEl.classList.add('active-tts');
+      activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    const utterance = new SpeechSynthesisUtterance(`Verse ${verseNum}. ${text}`);
+    utterance.rate = 0.85;
+    utterance.pitch = 1;
+    utterance.lang = 'en-US';
+    STATE.ttsUtterance = utterance;
+
+    utterance.onend = () => speakVerse(idx + 1);
+    utterance.onerror = () => stopTTS();
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  speakVerse(0);
+  showSnackbar(`Reading: ${STATE.currentBook} ${STATE.currentChapter} (${STATE.currentVersion})`);
+}
+
+function stopTTS() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  STATE.isSpeaking = false;
+  STATE.ttsCurrentVerse = null;
+
+  const fab = document.getElementById('tts-fab');
+  const icon = document.getElementById('tts-icon');
+  if (fab) fab.classList.remove('speaking');
+  if (icon) icon.textContent = 'volume_up';
+
+  document.querySelectorAll('.verse-container').forEach(el => el.classList.remove('active-tts'));
+}
+
+// =============================================================================
+// SWIPE GESTURE DETECTION
+// =============================================================================
+function setupSwipeGestures() {
+  const content = document.getElementById('chapter-content');
+  if (!content) return;
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+
+  content.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  content.addEventListener('touchend', (e) => {
+    // CRITICAL: Ignore if text is being selected
+    if (window.getSelection().toString().trim().length > 0) return;
+
+    const deltaX = e.changedTouches[0].clientX - touchStartX;
+    const deltaY = e.changedTouches[0].clientY - touchStartY;
+    const deltaTime = Date.now() - touchStartTime;
+
+    // Only register horizontal swipe if fast enough and more horizontal than vertical
+    if (deltaTime > 500) return;
+    if (Math.abs(deltaX) < 60) return;
+    if (Math.abs(deltaY) > Math.abs(deltaX) * 0.8) return;
+
+    if (deltaX > 0) {
+      prevChapter(); // Swipe right → prev
+    } else {
+      nextChapter(); // Swipe left → next
+    }
+  }, { passive: true });
+}
+
+// =============================================================================
+// KEYBOARD NAVIGATION
+// =============================================================================
+function setupKeyboardNav() {
+  document.addEventListener('keydown', (e) => {
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+    if (STATE.activeTab !== 'read') return;
+
+    if (e.key === 'ArrowRight') nextChapter();
+    if (e.key === 'ArrowLeft') prevChapter();
+    if (e.key === 'Escape') {
+      closeContextualMenu();
+      closeBottomSheet();
+      closeDialog();
+    }
+  });
+}
+
+// =============================================================================
+// HASH ROUTER (Deep linking)
+// =============================================================================
+function handleHashNavigation(hash) {
+  if (!hash || hash === '#') return;
+
+  // Format: #BookName-Chapter[-Verse]  e.g. #John-3-16
+  const parts = hash.replace('#', '').split('-');
+  if (parts.length < 2) return;
+
+  const lastPart = parts[parts.length - 1];
+  const secondToLast = parts[parts.length - 2];
+
+  let book, chapter, verse;
+
+  if (!isNaN(lastPart) && !isNaN(secondToLast)) {
+    // Has verse: e.g. John-3-16
+    chapter = parseInt(secondToLast);
+    verse = parseInt(lastPart);
+    book = parts.slice(0, parts.length - 2).join(' ');
+  } else if (!isNaN(lastPart)) {
+    // Has chapter: e.g. John-3
+    chapter = parseInt(lastPart);
+    book = parts.slice(0, parts.length - 1).join(' ');
+    verse = null;
+  } else {
+    book = parts.join(' ');
+    chapter = 1;
+    verse = null;
+  }
+
+  if (book && window.BIBLE_DATA?.books.all.includes(book)) {
+    STATE.currentBook = book;
+    STATE.currentChapter = chapter || 1;
+    updateBookSelect();
+    updateChapterSelect();
+    renderChapter();
+    switchTab('read');
+
+    if (verse) {
+      setTimeout(() => {
+        const verseEl = document.getElementById(`verse-${verse}`);
+        if (verseEl) {
+          verseEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          verseEl.classList.add('active-tts');
+          setTimeout(() => verseEl.classList.remove('active-tts'), 3000);
+        }
+      }, 500);
+    }
+  }
+}
+
+window.addEventListener('hashchange', () => handleHashNavigation(window.location.hash));
+
+// =============================================================================
+// SEARCH
+// =============================================================================
+function openSearch() {
+  STATE.searchOpen = true;
+  document.getElementById('search-container').classList.add('visible');
+  document.getElementById('search-input').focus();
+}
+
+function closeSearch() {
+  STATE.searchOpen = false;
+  document.getElementById('search-container').classList.remove('visible');
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+  document.getElementById('search-input').focus();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('search-input');
+  if (input) {
+    let searchTimeout;
+    input.addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => performSearch(input.value.trim()), 300);
+    });
+  }
+});
+
+function performSearch(query) {
+  const container = document.getElementById('search-results');
+  if (!query || query.length < 2) {
+    container.innerHTML = '<p style="padding:20px;color:var(--md-sys-color-on-surface-variant);text-align:center;">Type at least 2 characters to search...</p>';
+    return;
+  }
+
+  if (!window.BIBLE_DATA) {
+    container.innerHTML = '<p style="padding:20px;color:var(--md-sys-color-on-surface-variant);">Bible data not loaded.</p>';
+    return;
+  }
+
+  // Check if it's a reference (e.g. "John 3:16" or "Rom 8:28")
+  const refMatch = query.match(/^(\d?\s*[A-Za-z]+)\s*(\d+):(\d+)$/);
+  if (refMatch) {
+    const bookAbbr = refMatch[1].trim().toLowerCase();
+    const chapter = parseInt(refMatch[2]);
+    const verse = parseInt(refMatch[3]);
+    const allBooks = window.BIBLE_DATA.books.all;
+    const book = allBooks.find(b => b.toLowerCase().startsWith(bookAbbr) || b.toLowerCase().replace(/\s+/g, '').startsWith(bookAbbr.replace(/\s+/g, '')));
+
+    if (book) {
+      const text = window.BIBLE_DATA.versions[STATE.currentVersion]?.[book]?.[chapter]?.[verse];
+      container.innerHTML = `
+        <div style="padding:16px;">
+          <div class="search-result-item" onclick="goToVerse('${book}',${chapter},${verse})">
+            <div style="font-weight:700;color:var(--md-sys-color-primary);">${book} ${chapter}:${verse}</div>
+            <div style="font-style:italic;margin-top:4px;font-size:var(--typescale-body-medium);">"${text || '[Not available in sample data]'}"</div>
+          </div>
+        </div>`;
+      return;
+    }
+  }
+
+  // Full-text search
+  const results = [];
+  const lowerQuery = query.toLowerCase();
+  const versions = window.BIBLE_DATA.versions;
+
+  Object.entries(versions[STATE.currentVersion] || {}).forEach(([book, chapters]) => {
+    Object.entries(chapters).forEach(([chapter, verses]) => {
+      Object.entries(verses).forEach(([verse, text]) => {
+        if (text.toLowerCase().includes(lowerQuery)) {
+          results.push({ book, chapter: parseInt(chapter), verse: parseInt(verse), text });
+        }
+      });
+    });
+  });
+
+  if (!results.length) {
+    container.innerHTML = `<p style="padding:20px;color:var(--md-sys-color-on-surface-variant);text-align:center;">No results found for "${query}"</p>`;
+    return;
+  }
+
+  const limitedResults = results.slice(0, 30);
+  container.innerHTML = `
+    <div style="padding:8px 16px 4px;font-size:var(--typescale-label-medium);color:var(--md-sys-color-on-surface-variant);">${results.length} result${results.length !== 1 ? 's' : ''} in ${STATE.currentVersion} (showing ${limitedResults.length})</div>
+    ${limitedResults.map(r => {
+      const highlighted = r.text.replace(new RegExp(query, 'gi'), m => `<mark style="background:var(--highlight-yellow);border-radius:2px;">${m}</mark>`);
+      return `<div class="search-result-item" onclick="goToVerse('${r.book.replace(/'/g,"\\'")}',${r.chapter},${r.verse})">
+        <div style="font-weight:700;color:var(--md-sys-color-primary);font-size:var(--typescale-label-large);">${r.book} ${r.chapter}:${r.verse}</div>
+        <div style="font-style:italic;margin-top:4px;font-size:var(--typescale-body-medium);line-height:1.5;">"${highlighted}"</div>
+      </div>`;
+    }).join('')}`;
+}
+
+function goToVerse(book, chapter, verse) {
+  STATE.currentBook = book;
+  STATE.currentChapter = chapter;
+  updateBookSelect();
+  updateChapterSelect();
+  renderChapter();
+  switchTab('read');
+  closeSearch();
+
+  setTimeout(() => {
+    const el = document.getElementById(`verse-${verse}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('active-tts');
+      setTimeout(() => el.classList.remove('active-tts'), 3000);
+    }
+  }, 500);
+}
+
+// =============================================================================
+// DRAWER
+// =============================================================================
+function toggleDrawer() {
+  STATE.drawerOpen ? closeDrawer() : openDrawer();
+}
+
+function openDrawer() {
+  STATE.drawerOpen = true;
+  document.getElementById('modal-drawer').classList.add('open');
+  document.getElementById('drawer-scrim').classList.add('visible');
+}
+
+function closeDrawer() {
+  STATE.drawerOpen = false;
+  document.getElementById('modal-drawer').classList.remove('open');
+  document.getElementById('drawer-scrim').classList.remove('visible');
+}
+
+// =============================================================================
+// BOTTOM SHEET
+// =============================================================================
+function openBottomSheet(html) {
+  STATE.bottomSheetOpen = true;
+  document.getElementById('bottom-sheet-content').innerHTML = html;
+  document.getElementById('bottom-sheet').classList.add('open');
+  document.getElementById('bs-scrim').classList.add('visible');
+}
+
+function closeBottomSheet() {
+  STATE.bottomSheetOpen = false;
+  document.getElementById('bottom-sheet').classList.remove('open');
+  document.getElementById('bs-scrim').classList.remove('visible');
+}
+
+// =============================================================================
+// DIALOG
+// =============================================================================
+function openDialog(html) {
+  STATE.dialogOpen = true;
+  document.getElementById('dialog-content').innerHTML = html;
+  document.getElementById('dialog-scrim').classList.add('visible');
+}
+
+function closeDialog(event) {
+  if (event && event.target !== document.getElementById('dialog-scrim')) return;
+  STATE.dialogOpen = false;
+  document.getElementById('dialog-scrim').classList.remove('visible');
+}
+
+function closeDialogDirect() {
+  STATE.dialogOpen = false;
+  document.getElementById('dialog-scrim').classList.remove('visible');
+}
+
+// =============================================================================
+// NOTES
+// =============================================================================
+function openAddNoteDialog(verseKey) {
+  const parts = verseKey.split('-');
+  const verse = parts[parts.length - 1];
+  const chapter = parts[parts.length - 2];
+  const book = parts.slice(0, parts.length - 2).join(' ');
+  const existingNote = STATE.notes[verseKey] || '';
+
+  openDialog(`
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;">
+        ${existingNote ? 'Edit Note' : 'Add Note'} — ${book} ${chapter}:${verse}
+      </div>
+      <textarea id="note-input" placeholder="Write your reflection, insight, or note here..."
+        style="width:100%;min-height:120px;padding:12px;border-radius:var(--md-shape-medium);border:1.5px solid var(--md-sys-color-outline-variant);background:var(--md-sys-color-surface-container);color:var(--md-sys-color-on-surface);font-family:var(--font-primary);font-size:var(--typescale-body-medium);line-height:1.6;resize:vertical;outline:none;">${existingNote}</textarea>
+      <label style="display:flex;align-items:center;gap:8px;font-size:var(--typescale-body-medium);cursor:pointer;">
+        <input type="checkbox" id="note-public" style="width:16px;height:16px;" />
+        Share publicly to Community Feed
+      </label>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn-text" onclick="closeDialogDirect()">Cancel</button>
+        ${existingNote ? `<button class="btn-outlined" style="color:var(--md-sys-color-error);border-color:var(--md-sys-color-error);" onclick="deleteNote('${verseKey}')">Delete</button>` : ''}
+        <button class="btn-filled" onclick="saveNote('${verseKey}')">
+          <span class="material-icons-round" style="font-size:18px;">save</span> Save
+        </button>
+      </div>
+    </div>`);
+}
+
+function saveNote(verseKey) {
+  const noteText = document.getElementById('note-input').value.trim();
+  const isPublic = document.getElementById('note-public').checked;
+
+  if (!noteText) { showSnackbar('Note cannot be empty'); return; }
+
+  const parts = verseKey.split('-');
+  const verse = parts[parts.length - 1];
+  const chapter = parts[parts.length - 2];
+  const book = parts.slice(0, parts.length - 2).join(' ');
+
+  STATE.notes[verseKey] = {
+    text: noteText,
+    verseRef: `${book} ${chapter}:${verse}`,
+    verseKey,
+    createdAt: new Date().toISOString(),
+    isPublic
+  };
+
+  saveNotesToStorage();
+
+  if (isPublic) {
+    savePublicNote(noteText, verseKey, `${book} ${chapter}:${verse}`);
+  }
+
+  closeDialogDirect();
+  renderChapter();
+  showSnackbar('Note saved!');
+
+  if (STATE.firebaseReady && STATE.db && STATE.user) {
+    STATE.db.collection('notes').add({
+      uid: STATE.user.uid,
+      displayName: STATE.user.displayName,
+      email: maskEmail(STATE.user.email),
+      photoURL: STATE.user.photoURL || null,
+      verseKey,
+      verseRef: `${book} ${chapter}:${verse}`,
+      text: noteText,
+      isPublic,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      likes: 0,
+      flagged: false
+    }).catch(e => console.warn('[Firestore] Note save error:', e));
+  }
+}
+
+function deleteNote(verseKey) {
+  delete STATE.notes[verseKey];
+  saveNotesToStorage();
+  closeDialogDirect();
+  renderChapter();
+  showSnackbar('Note deleted');
+}
+
+function saveNotesToStorage() {
+  const notesToSave = {};
+  Object.entries(STATE.notes).forEach(([k, v]) => {
+    notesToSave[k] = typeof v === 'object' ? v : { text: v, verseKey: k, createdAt: new Date().toISOString() };
+  });
+  localStorage.setItem('bible_notes', JSON.stringify(notesToSave));
+}
+
+function loadNotes() {
+  try {
+    STATE.notes = JSON.parse(localStorage.getItem('bible_notes') || '{}');
+  } catch {
+    STATE.notes = {};
+  }
+}
+
+// =============================================================================
+// COMMUNITY FEED
+// =============================================================================
+const DEMO_FEED = [
+  {
+    id: 'demo1',
+    displayName: 'Sarah M.',
+    email: maskEmail('sarah@gmail.com'),
+    photoURL: null,
+    verseRef: 'John 3:16',
+    verseKey: 'John-3-16',
+    text: 'This verse changed my entire understanding of who God is. He is not an angry judge waiting to condemn — He is a loving Father who ran toward us. Just like the prodigal son\'s father.',
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    likes: 14,
+    comments: 3
+  },
+  {
+    id: 'demo2',
+    displayName: 'Michael R.',
+    email: maskEmail('michael@outlook.com'),
+    photoURL: null,
+    verseRef: 'Romans 8:28',
+    verseKey: 'Romans-8-28',
+    text: 'Reading this after losing my job last month. The phrase "ALL things work together for good" finally hit me. Not SOME things. ALL things. Even the painful ones. Trusting God with this season.',
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+    likes: 27,
+    comments: 8
+  },
+  {
+    id: 'demo3',
+    displayName: 'Grace T.',
+    email: maskEmail('grace@yahoo.com'),
+    photoURL: null,
+    verseRef: 'Psalms 23:4',
+    verseKey: 'Psalms-23-4',
+    text: '"Even though I walk through the valley of the shadow of death, I will fear no evil." Sat with a terminally ill friend today and read her this Psalm. She smiled and said she wasn\'t afraid. Peace that passes understanding.',
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    likes: 52,
+    comments: 11
+  }
+];
+
+function savePublicNote(text, verseKey, verseRef) {
+  const post = {
+    id: 'local-' + Date.now(),
+    displayName: STATE.user?.displayName || 'Anonymous',
+    email: maskEmail(STATE.user?.email || ''),
+    photoURL: STATE.user?.photoURL || null,
+    verseKey,
+    verseRef,
+    text,
+    createdAt: new Date().toISOString(),
+    likes: 0,
+    comments: 0
+  };
+  STATE.communityFeed.unshift(post);
+  saveCommunityFeedToStorage();
+}
+
+function saveCommunityFeedToStorage() {
+  localStorage.setItem('bible_community_feed', JSON.stringify(STATE.communityFeed));
+}
+
+function loadCommunityFeed() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('bible_community_feed') || '[]');
+    STATE.communityFeed = [...saved];
+  } catch {
+    STATE.communityFeed = [];
+  }
+
+  // Merge with demo data
+  const allPosts = [...STATE.communityFeed, ...DEMO_FEED];
+  renderCommunityFeed(allPosts);
+
+  // Load from Firestore if available
+  if (STATE.firebaseReady && STATE.db) {
+    STATE.db.collection('notes')
+      .where('isPublic', '==', true)
+      .orderBy('createdAt', 'desc')
+      .limit(20)
+      .get()
+      .then(snap => {
+        const firestorePosts = snap.docs.map(d => ({ id: d.id, ...d.data(), createdAt: d.data().createdAt?.toDate?.()?.toISOString() || new Date().toISOString() }));
+        renderCommunityFeed([...firestorePosts, ...DEMO_FEED]);
+      })
+      .catch(e => console.warn('[Firestore] Community feed load error:', e));
+  }
+}
+
+function renderCommunityFeed(posts, filter = 'all') {
+  const container = document.getElementById('community-feed');
+  if (!container) return;
+
+  if (!posts.length) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--md-sys-color-on-surface-variant);">
+      <span class="material-icons-round" style="font-size:64px;display:block;margin-bottom:16px;opacity:0.3;">people</span>
+      <p>No community posts yet. Be the first to share!</p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = posts.map(post => {
+    const initials = (post.displayName || 'A')[0].toUpperCase();
+    const timeAgo = getTimeAgo(post.createdAt);
+    const flagged = post.flagged;
+    const filteredText = filterProfanity(post.text);
+
+    return `<div class="feed-post" data-post-id="${post.id}" ${flagged ? 'style="border:2px solid var(--md-sys-color-error);"' : ''}>
+      <div class="post-header">
+        <div class="avatar" style="width:40px;height:40px;font-size:0.9rem;flex-shrink:0;">
+          ${post.photoURL ? `<img src="${post.photoURL}" alt="Avatar" onerror="this.parentElement.textContent='${initials}'"/>` : initials}
+        </div>
+        <div class="post-meta">
+          <div class="post-author">${post.displayName || 'Anonymous'}</div>
+          <div class="post-time">${post.email} · ${timeAgo}</div>
+        </div>
+        ${flagged && STATE.isAdmin ? '<span style="font-size:0.7rem;padding:2px 8px;background:var(--md-sys-color-error-container);color:var(--md-sys-color-error);border-radius:4px;">FLAGGED</span>' : ''}
+      </div>
+      ${post.verseRef ? `<span class="post-verse-ref" onclick="goToVerse(...parseVerseRef('${post.verseRef}'))">${post.verseRef}</span>` : ''}
+      <div class="post-content">${filteredText}</div>
+      <div class="post-actions">
+        <button class="btn-text" style="font-size:0.75rem;gap:4px;" onclick="likePost('${post.id}', this)">
+          <span class="material-icons-round" style="font-size:16px;">favorite_border</span>
+          ${post.likes || 0}
+        </button>
+        <button class="btn-text" style="font-size:0.75rem;gap:4px;" onclick="showComments('${post.id}')">
+          <span class="material-icons-round" style="font-size:16px;">chat_bubble_outline</span>
+          ${post.comments || 0}
+        </button>
+        ${STATE.isAdmin ? `
+        <button class="btn-text" style="font-size:0.75rem;color:var(--md-sys-color-error);margin-left:auto;" onclick="adminDeletePost('${post.id}')">
+          <span class="material-icons-round" style="font-size:16px;">delete</span>
+        </button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterFeed(type, btn) {
+  document.querySelectorAll('[onclick^="filterFeed"]').forEach(b => b.classList.remove('selected'));
+  if (btn) btn.classList.add('selected');
+  const allPosts = [...STATE.communityFeed, ...DEMO_FEED];
+  renderCommunityFeed(allPosts, type);
+}
+
+function likePost(postId, btn) {
+  const icon = btn.querySelector('.material-icons-round');
+  const isLiked = icon.textContent === 'favorite';
+  icon.textContent = isLiked ? 'favorite_border' : 'favorite';
+  icon.style.color = isLiked ? '' : 'var(--md-sys-color-error)';
+  const countEl = btn.childNodes[btn.childNodes.length - 1];
+  const currentCount = parseInt(countEl.textContent) || 0;
+  countEl.textContent = ' ' + (isLiked ? currentCount - 1 : currentCount + 1);
+}
+
+function showComments(postId) {
+  openBottomSheet(`
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:var(--font-display);font-weight:700;font-size:1rem;">Comments</div>
+      <div style="color:var(--md-sys-color-on-surface-variant);font-size:var(--typescale-body-medium);text-align:center;padding:20px;">
+        <span class="material-icons-round" style="font-size:36px;display:block;margin-bottom:8px;opacity:0.4;">chat_bubble_outline</span>
+        Comments are loaded from Firestore. Connect Firebase to enable full comment functionality.
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end;">
+        <textarea placeholder="Add a comment..." style="flex:1;padding:10px;border-radius:var(--md-shape-medium);border:1.5px solid var(--md-sys-color-outline-variant);background:var(--md-sys-color-surface-container);color:var(--md-sys-color-on-surface);font-family:var(--font-primary);font-size:var(--typescale-body-medium);resize:none;outline:none;min-height:60px;"></textarea>
+        <button class="btn-filled" style="padding:10px;" onclick="showSnackbar('Comment posted!')">
+          <span class="material-icons-round">send</span>
+        </button>
+      </div>
+    </div>`);
+}
+
+function openShareNoteDialog(verseKey) {
+  const parts = verseKey ? verseKey.split('-') : [];
+  const verse = parts[parts.length - 1];
+  const chapter = parts[parts.length - 2];
+  const book = parts.slice(0, parts.length - 2).join(' ');
+
+  openDialog(`
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;">Share to Community Feed</div>
+      ${verseKey ? `<div class="post-verse-ref" style="cursor:default;">${book} ${chapter}:${verse}</div>` : ''}
+      <textarea id="share-note-input" placeholder="Share your insight, reflection, or testimony..."
+        style="width:100%;min-height:120px;padding:12px;border-radius:var(--md-shape-medium);border:1.5px solid var(--md-sys-color-outline-variant);background:var(--md-sys-color-surface-container);color:var(--md-sys-color-on-surface);font-family:var(--font-primary);font-size:var(--typescale-body-medium);line-height:1.6;resize:vertical;outline:none;"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn-text" onclick="closeDialogDirect()">Cancel</button>
+        <button class="btn-filled" onclick="submitSharedNote('${verseKey || ''}')">
+          <span class="material-icons-round" style="font-size:18px;">share</span> Share
+        </button>
+      </div>
+    </div>`);
+}
+
+function submitSharedNote(verseKey) {
+  const text = document.getElementById('share-note-input')?.value?.trim();
+  if (!text) { showSnackbar('Please write something to share'); return; }
+
+  const filtered = filterProfanity(text);
+  if (filtered !== text) showSnackbar('Some words were filtered for community guidelines');
+
+  const parts = verseKey.split('-');
+  const verse = parts[parts.length - 1];
+  const chapter = parts[parts.length - 2];
+  const book = parts.slice(0, parts.length - 2).join(' ');
+
+  savePublicNote(filtered, verseKey, `${book} ${chapter}:${verse}`);
+  closeDialogDirect();
+  showSnackbar('Shared to Community Feed!');
+  if (STATE.activeTab === 'community') loadCommunityFeed();
+}
+
+function parseVerseRef(ref) {
+  const match = ref.match(/^(.+?)\s+(\d+):(\d+)$/);
+  if (match) return [match[1], parseInt(match[2]), parseInt(match[3])];
+  return ['John', 3, 16];
+}
+
+// =============================================================================
+// PRAYER WALL
+// =============================================================================
+const DEMO_PRAYERS = [
+  {
+    id: 'prayer1',
+    displayName: 'Anonymous',
+    isAnonymous: true,
+    text: 'Please pray for healing for my mother who was just diagnosed with cancer. We are trusting God but it is so hard.',
+    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    prayedCount: 23,
+    isPraiseReport: false,
+    comments: 5
+  },
+  {
+    id: 'prayer2',
+    displayName: 'James K.',
+    isAnonymous: false,
+    text: 'Struggling with anxiety and depression. Medications help but I need God\'s peace more than anything. "Do not be anxious about anything" (Phil 4:6)',
+    createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+    prayedCount: 41,
+    isPraiseReport: false,
+    comments: 9
+  },
+  {
+    id: 'prayer3',
+    displayName: 'Maria L.',
+    isAnonymous: false,
+    text: '🎉 PRAISE REPORT: Six months ago I posted here asking for prayer for a job. I got the job AND a promotion this month! God is faithful. Keep praying everyone — He answers!',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    prayedCount: 67,
+    isPraiseReport: true,
+    comments: 14
+  }
+];
+
+function renderPrayerWall() {
+  const allPrayers = [...(STATE.prayerRequests || []), ...DEMO_PRAYERS];
+  return `
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <button class="btn-filled" onclick="openPostPrayerDialog()" style="justify-content:center;">
+        <span class="material-icons-round" style="font-size:18px;">add</span> Post Prayer Request
+      </button>
+      ${allPrayers.map(prayer => `
+        <div class="prayer-card ${prayer.isPraiseReport ? 'praise-report' : ''}">
+          ${prayer.isPraiseReport ? '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><span style="font-size:1.2rem;">🎉</span><span style="font-weight:700;color:#F9A825;font-size:0.9rem;">PRAISE REPORT</span></div>' : ''}
+          <div class="post-header" style="margin-bottom:10px;">
+            <div class="avatar" style="width:36px;height:36px;font-size:0.8rem;flex-shrink:0;background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container);">
+              ${prayer.isAnonymous ? '🙏' : prayer.displayName[0].toUpperCase()}
+            </div>
+            <div class="post-meta">
+              <div class="post-author">${prayer.isAnonymous ? 'Anonymous' : prayer.displayName}</div>
+              <div class="post-time">${getTimeAgo(prayer.createdAt)}</div>
+            </div>
+          </div>
+          <p style="font-size:var(--typescale-body-medium);line-height:1.7;color:var(--md-sys-color-on-surface);">${filterProfanity(prayer.text)}</p>
+          <div class="post-actions" style="margin-top:12px;">
+            <button class="btn-tonal" style="padding:8px 16px;font-size:0.8rem;gap:6px;" onclick="prayForThis('${prayer.id}', this)">
+              🙏 Prayed for this (${prayer.prayedCount})
+            </button>
+            <button class="btn-text" style="font-size:0.75rem;" onclick="showComments('${prayer.id}')">
+              <span class="material-icons-round" style="font-size:16px;">chat_bubble_outline</span> ${prayer.comments}
+            </button>
+            ${STATE.isAdmin ? `<button class="btn-text" style="font-size:0.75rem;color:var(--md-sys-color-error);margin-left:auto;" onclick="adminDeletePrayer('${prayer.id}')"><span class="material-icons-round" style="font-size:16px;">delete</span></button>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function openPostPrayerDialog() {
+  openDialog(`
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;">🙏 Post Prayer Request</div>
+      <textarea id="prayer-input" placeholder="Share your prayer request with the community..."
+        style="width:100%;min-height:120px;padding:12px;border-radius:var(--md-shape-medium);border:1.5px solid var(--md-sys-color-outline-variant);background:var(--md-sys-color-surface-container);color:var(--md-sys-color-on-surface);font-family:var(--font-primary);font-size:var(--typescale-body-medium);line-height:1.6;resize:vertical;outline:none;"></textarea>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="prayer-anonymous" style="width:16px;height:16px;" />
+        <span style="font-size:var(--typescale-body-medium);">Post anonymously</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="prayer-praise" style="width:16px;height:16px;" />
+        <span style="font-size:var(--typescale-body-medium);">This is a Praise Report 🎉</span>
+      </label>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn-text" onclick="closeDialogDirect()">Cancel</button>
+        <button class="btn-filled" onclick="submitPrayer()">
+          <span class="material-icons-round" style="font-size:18px;">send</span> Post
+        </button>
+      </div>
+    </div>`);
+}
+
+function submitPrayer() {
+  const text = document.getElementById('prayer-input')?.value?.trim();
+  if (!text) { showSnackbar('Please write your prayer request'); return; }
+
+  const isAnonymous = document.getElementById('prayer-anonymous').checked;
+  const isPraiseReport = document.getElementById('prayer-praise').checked;
+
+  const prayer = {
+    id: 'local-prayer-' + Date.now(),
+    displayName: isAnonymous ? 'Anonymous' : (STATE.user?.displayName || 'Anonymous'),
+    isAnonymous,
+    text: filterProfanity(text),
+    createdAt: new Date().toISOString(),
+    prayedCount: 0,
+    isPraiseReport,
+    comments: 0
+  };
+
+  STATE.prayerRequests.unshift(prayer);
+  closeDialogDirect();
+  showSnackbar(isPraiseReport ? '🎉 Praise report posted!' : '🙏 Prayer request posted!');
+  loadProfileContent();
+}
+
+function prayForThis(prayerId, btn) {
+  const countMatch = btn.textContent.match(/\((\d+)\)/);
+  const count = countMatch ? parseInt(countMatch[1]) : 0;
+  btn.innerHTML = `🙏 Prayed for this (${count + 1})`;
+  btn.style.background = 'var(--md-sys-color-primary-container)';
+  showSnackbar('🙏 Prayed! God hears every prayer.');
+}
+
+// =============================================================================
+// HOME CONTENT
+// =============================================================================
+function loadHomeContent() {
+  updateGreeting();
+  loadStreakData();
+  loadVOTD();
+  loadReadingPlans();
+  loadPopularBooks();
+}
+
+function updateGreeting() {
+  const hour = new Date().getHours();
+  let greeting, sub;
+  if (hour < 12) { greeting = 'Good morning'; sub = 'Start your day with the Word of God'; }
+  else if (hour < 17) { greeting = 'Good afternoon'; sub = 'Take a moment to read and reflect'; }
+  else { greeting = 'Good evening'; sub = 'Wind down with Scripture tonight'; }
+
+  const name = STATE.user?.displayName?.split(' ')[0];
+  document.getElementById('greeting-text').textContent = name ? `${greeting}, ${name}!` : `${greeting}!`;
+  document.getElementById('greeting-sub').textContent = sub;
+}
+
+function loadStreakData() {
+  const streak = parseInt(localStorage.getItem('bible_streak') || '0');
+  STATE.readingStreak = streak;
+  document.getElementById('streak-count').textContent = streak;
+
+  const badges = document.getElementById('streak-badges');
+  if (badges) {
+    const milestones = [7, 14, 30, 60, 90, 180, 365];
+    badges.innerHTML = milestones.map(m =>
+      `<span style="font-size:1.2rem;opacity:${streak >= m ? '1' : '0.25'};" title="${m} day streak">${m >= 365 ? '🏆' : m >= 90 ? '💎' : m >= 30 ? '🌟' : '🔥'}</span>`
+    ).join('');
+  }
+}
+
+function markReadingProgress() {
+  const today = new Date().toDateString();
+  const lastRead = localStorage.getItem('bible_last_read');
+  if (lastRead !== today) {
+    localStorage.setItem('bible_last_read', today);
+    const streak = parseInt(localStorage.getItem('bible_streak') || '0');
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    const newStreak = lastRead === yesterday ? streak + 1 : 1;
+    localStorage.setItem('bible_streak', newStreak);
+    STATE.readingStreak = newStreak;
+    const el = document.getElementById('streak-count');
+    if (el) el.textContent = newStreak;
+    if (newStreak > streak) showSnackbar(`🔥 ${newStreak}-day streak! Keep it up!`);
+  }
+}
+
+function loadVOTD() {
+  if (!window.BIBLE_DATA) return;
+  const votds = window.BIBLE_DATA.verseOfTheDay;
+  const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % votds.length;
+  const votd = votds[dayIndex];
+
+  const verseText = window.BIBLE_DATA.versions.ESV?.[votd.book]?.[votd.chapter]?.[votd.verse];
+
+  document.getElementById('votd-ref').textContent = votd.ref;
+  document.getElementById('votd-text').textContent = verseText || `"${votd.ref}" — Open the app to read.`;
+  document.getElementById('votd-reflection').textContent = votd.reflection;
+
+  STATE.votdData = votd;
+}
+
+function goToVOTD() {
+  if (!STATE.votdData) return;
+  const v = STATE.votdData;
+  STATE.currentBook = v.book;
+  STATE.currentChapter = v.chapter;
+  updateBookSelect();
+  updateChapterSelect();
+  renderChapter();
+  switchTab('read');
+  setTimeout(() => {
+    const el = document.getElementById(`verse-${v.verse}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 600);
+}
+
+function shareVOTD() {
+  if (!STATE.votdData) return;
+  const v = STATE.votdData;
+  const text = `📖 ${v.ref} — Daily Verse\n\n"${document.getElementById('votd-text').textContent}"\n\nReflection: ${v.reflection}`;
+  if (navigator.share) {
+    navigator.share({ title: 'Verse of the Day', text });
+  } else {
+    navigator.clipboard.writeText(text).then(() => showSnackbar('Verse copied to clipboard!'));
+  }
+}
+
+function loadReadingPlans() {
+  const container = document.getElementById('reading-plans-list');
+  if (!container || !window.BIBLE_DATA) return;
+
+  container.innerHTML = window.BIBLE_DATA.readingPlans.map(plan => {
+    const progress = parseInt(localStorage.getItem(`plan_progress_${plan.id}`) || '0');
+    const pct = Math.min(100, Math.round((progress / plan.totalDays) * 100));
+
+    return `<div class="card" style="padding:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div style="font-weight:600;font-size:var(--typescale-body-medium);">${plan.name}</div>
+        <span style="font-size:var(--typescale-label-medium);color:var(--md-sys-color-primary);font-weight:700;">${pct}%</span>
+      </div>
+      <div style="font-size:var(--typescale-body-small);color:var(--md-sys-color-on-surface-variant);margin-bottom:8px;">${plan.description}</div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" style="width:${pct}%;"></div>
+      </div>
+      <div style="font-size:var(--typescale-label-small);color:var(--md-sys-color-on-surface-variant);margin-top:4px;">Day ${progress} of ${plan.totalDays}</div>
+    </div>`;
+  }).join('');
+}
+
+function loadPopularBooks() {
+  const container = document.getElementById('popular-books');
+  if (!container) return;
+  const popular = ['Genesis', 'Psalms', 'Proverbs', 'Isaiah', 'Matthew', 'John', 'Romans', 'Revelation'];
+  container.innerHTML = popular.map(book =>
+    `<button class="chip" onclick="selectBook('${book}')" style="font-size:0.8rem;">${book}</button>`
+  ).join('');
+}
+
+// =============================================================================
+// PROFILE CONTENT
+// =============================================================================
+function updateProfileUI() {
+  const user = STATE.user;
+  if (!user) return;
+
+  const nameEl = document.getElementById('profile-display-name');
+  const emailEl = document.getElementById('profile-email-display');
+  const avatarEl = document.getElementById('profile-avatar-display');
+  const letterEl = document.getElementById('profile-avatar-letter');
+
+  if (nameEl) nameEl.textContent = user.displayName || 'User';
+  if (emailEl) emailEl.textContent = maskEmail(user.email);
+
+  const initial = (user.displayName || user.email || 'U')[0].toUpperCase();
+  if (letterEl) letterEl.textContent = initial;
+
+  if (user.photoURL && avatarEl) {
+    avatarEl.innerHTML = `<img src="${user.photoURL}" alt="Profile" onerror="this.parentElement.innerHTML='${initial}'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+  }
+
+  // Admin tab
+  if (STATE.isAdmin) {
+    document.getElementById('profile-tab-admin').classList.remove('hidden');
+  }
+}
+
+function loadProfileContent() {
+  const container = document.getElementById('profile-tab-content');
+  if (!container) return;
+
+  switch (STATE.activeProfileTab) {
+    case 'notes': renderMyNotes(container); break;
+    case 'highlights': renderMyHighlights(container); break;
+    case 'prayer': container.innerHTML = renderPrayerWall(); break;
+    case 'settings': renderSettings(container); break;
+    case 'admin': renderAdminPanel(container); break;
+  }
+}
+
+function renderMyNotes(container) {
+  const notes = Object.entries(STATE.notes);
+  if (!notes.length) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--md-sys-color-on-surface-variant);">
+      <span class="material-icons-round" style="font-size:64px;display:block;margin-bottom:16px;opacity:0.3;">sticky_note_2</span>
+      <p style="font-family:var(--font-display);font-size:1rem;font-weight:500;margin-bottom:6px;">No notes yet</p>
+      <p>Enable Study Mode in the Reader and tap a verse to add notes.</p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = notes.sort((a, b) => {
+    const aDate = a[1]?.createdAt || ''; const bDate = b[1]?.createdAt || '';
+    return bDate.localeCompare(aDate);
+  }).map(([key, note]) => {
+    const noteObj = typeof note === 'object' ? note : { text: note, verseRef: key, createdAt: '' };
+    const timeAgo = noteObj.createdAt ? getTimeAgo(noteObj.createdAt) : '';
+    return `<div class="card" style="padding:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span class="post-verse-ref" onclick="goToVerse(...parseVerseRef('${noteObj.verseRef || key}'))" style="font-size:0.75rem;">${noteObj.verseRef || key}</span>
+        <span style="font-size:var(--typescale-label-small);color:var(--md-sys-color-on-surface-variant);">${timeAgo}</span>
+      </div>
+      <p style="font-size:var(--typescale-body-medium);line-height:1.65;color:var(--md-sys-color-on-surface);">${noteObj.text}</p>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn-text" style="font-size:0.75rem;" onclick="openAddNoteDialog('${key}')">
+          <span class="material-icons-round" style="font-size:14px;">edit</span> Edit
+        </button>
+        <button class="btn-text" style="font-size:0.75rem;color:var(--md-sys-color-error);" onclick="deleteNote('${key}');loadProfileContent()">
+          <span class="material-icons-round" style="font-size:14px;">delete</span>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMyHighlights(container) {
+  const highlights = Object.entries(STATE.highlights);
+  if (!highlights.length) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--md-sys-color-on-surface-variant);">
+      <span class="material-icons-round" style="font-size:64px;display:block;margin-bottom:16px;opacity:0.3;">highlight</span>
+      <p style="font-family:var(--font-display);font-size:1rem;font-weight:500;margin-bottom:6px;">No highlights yet</p>
+      <p>Select a verse in the Reader and tap a highlight color.</p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = highlights.map(([key, color]) => {
+    const parts = key.split('-');
+    const v = parts[parts.length - 1];
+    const ch = parts[parts.length - 2];
+    const book = parts.slice(0, parts.length - 2).join(' ');
+    const text = window.BIBLE_DATA?.versions[STATE.currentVersion]?.[book]?.[parseInt(ch)]?.[parseInt(v)];
+    const colorMap = { yellow: '#FFD700', mint: '#00E676', blue: '#2196F3', pink: '#E91E63' };
+    return `<div class="card-outlined hl-${color}" style="padding:14px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <div style="width:12px;height:12px;border-radius:50%;background:${colorMap[color]};flex-shrink:0;"></div>
+        <span class="post-verse-ref" style="font-size:0.75rem;cursor:pointer;" onclick="goToVerse('${book}',${ch},${v})">${book} ${ch}:${v}</span>
+      </div>
+      <p style="font-size:var(--typescale-body-medium);font-style:italic;line-height:1.6;">"${text || '[Text not in sample data]'}"</p>
+    </div>`;
+  }).join('');
+}
+
+function renderSettings(container) {
+  container.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:0;">
+
+      <div class="settings-section">
+        <div class="settings-section-title">Appearance</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Theme</div>
+          </div>
+        </div>
+        <div class="theme-options">
+          ${['light','dark','midnight','sepia'].map(t =>
+            `<button class="theme-btn ${STATE.theme === t ? 'active' : ''}" onclick="setTheme('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`
+          ).join('')}
+        </div>
+
+        <div class="settings-row" style="margin-top:16px;">
+          <div>
+            <div class="settings-row-label">Accent Color</div>
+            <div class="settings-row-sub">Affects buttons and interactive elements</div>
+          </div>
+        </div>
+        <div class="color-swatches">
+          ${[
+            ['#4A90D9','Blue'],['#6200EE','Purple'],['#018786','Teal'],
+            ['#E53935','Red'],['#388E3C','Green'],['#F57C00','Orange'],['#AD1457','Pink']
+          ].map(([color, name]) =>
+            `<div class="color-swatch ${STATE.accentColor === color ? 'active' : ''}"
+                  style="background:${color};"
+                  title="${name}"
+                  onclick="setAccentColor('${color}')"></div>`
+          ).join('')}
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Reading Comfort</div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Text Size</div>
+            <div class="settings-row-sub">${Math.round(STATE.fontSize * 16)}px</div>
+          </div>
+        </div>
+        <input type="range" min="0.8" max="1.6" step="0.05" value="${STATE.fontSize}"
+               oninput="updateFontSize(this.value)" style="margin-bottom:8px;"/>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Font Weight</div>
+            <div class="settings-row-sub">${STATE.fontWeight}</div>
+          </div>
+        </div>
+        <input type="range" min="300" max="700" step="100" value="${STATE.fontWeight}"
+               oninput="updateFontWeight(this.value)" style="margin-bottom:8px;"/>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Line Spacing</div>
+            <div class="settings-row-sub">${STATE.lineHeight}x</div>
+          </div>
+        </div>
+        <input type="range" min="1.3" max="2.5" step="0.1" value="${STATE.lineHeight}"
+               oninput="updateLineHeight(this.value)" />
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Reader Settings</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Parallel Version</div>
+            <div class="settings-row-sub">Used in side-by-side reading mode</div>
+          </div>
+          <select class="reader-selector" onchange="STATE.parallelVersion=this.value" style="font-size:0.8rem;">
+            ${['ESV','NIV','NLT','RSV'].map(v => `<option value="${v}" ${STATE.parallelVersion===v?'selected':''}>${v}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Notifications</div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Daily Verse Reminder</div>
+            <div class="settings-row-sub">Get a daily notification with a Bible verse</div>
+          </div>
+          <label class="m3-switch">
+            <input type="checkbox" id="notif-toggle" onchange="toggleNotifications(this.checked)" />
+            <span class="m3-switch-track"></span>
+            <span class="m3-switch-thumb"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">App Info</div>
+        <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <div class="settings-row-label">Bible PWA v1.0.0</div>
+          <div class="settings-row-sub">Built with Material Design 3 · Zero dependencies · Works offline</div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-outlined" style="font-size:0.75rem;padding:8px 14px;" onclick="triggerInstall()">
+            <span class="material-icons-round" style="font-size:16px;">install_mobile</span> Install App
+          </button>
+          <button class="btn-outlined" style="font-size:0.75rem;padding:8px 14px;" onclick="showReadme()">
+            <span class="material-icons-round" style="font-size:16px;">description</span> README
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// =============================================================================
+// ADMIN PANEL
+// =============================================================================
+function setupAdminTab() {
+  if (STATE.isAdmin) {
+    document.getElementById('profile-tab-admin').classList.remove('hidden');
+  }
+}
+
+function renderAdminPanel(container) {
+  if (!STATE.isAdmin) {
+    container.innerHTML = '<p style="color:var(--md-sys-color-error);padding:20px;">Access denied.</p>';
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="admin-badge">⚡ ADMIN CONSOLE</span>
+      </div>
+
+      <div class="card" style="padding:16px;">
+        <div class="section-title" style="font-size:1rem;margin-bottom:12px;">📢 Global Announcement</div>
+        <textarea id="admin-announcement" placeholder="Write an announcement for all users..."
+          style="width:100%;min-height:80px;padding:10px;border-radius:var(--md-shape-medium);border:1.5px solid var(--md-sys-color-outline-variant);background:var(--md-sys-color-surface-container);color:var(--md-sys-color-on-surface);font-family:var(--font-primary);font-size:var(--typescale-body-medium);line-height:1.6;resize:vertical;outline:none;">${STATE.announcement || ''}</textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="btn-filled" style="font-size:0.8rem;" onclick="postAnnouncement()">Post Announcement</button>
+          <button class="btn-outlined" style="font-size:0.8rem;color:var(--md-sys-color-error);border-color:var(--md-sys-color-error);" onclick="clearAnnouncement()">Clear</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding:16px;">
+        <div class="section-title" style="font-size:1rem;margin-bottom:12px;">👥 User Management</div>
+        <p style="font-size:var(--typescale-body-medium);color:var(--md-sys-color-on-surface-variant);">Connect Firebase to view and manage registered users. The admin console uses Firebase Admin SDK accessed securely through Firestore rules.</p>
+        <div id="admin-users-list" style="margin-top:12px;"></div>
+        <button class="btn-tonal" style="font-size:0.8rem;margin-top:8px;" onclick="loadAdminUsers()">Load Users</button>
+      </div>
+
+      <div class="card" style="padding:16px;">
+        <div class="section-title" style="font-size:1rem;margin-bottom:12px;">🛡️ Content Moderation</div>
+        <p style="font-size:var(--typescale-body-medium);color:var(--md-sys-color-on-surface-variant);margin-bottom:12px;">Review and remove flagged or inappropriate community posts.</p>
+        <button class="btn-tonal" style="font-size:0.8rem;" onclick="loadFlaggedContent()">Load Flagged Content</button>
+        <div id="admin-flagged-list" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="card" style="padding:16px;">
+        <div class="section-title" style="font-size:1rem;margin-bottom:12px;">🔤 Profanity Filter</div>
+        <p style="font-size:var(--typescale-body-medium);color:var(--md-sys-color-on-surface-variant);margin-bottom:8px;">Current filtered words: ${PROFANITY_LIST.length} words</p>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;">
+          ${PROFANITY_LIST.map(w => `<span style="font-size:0.7rem;padding:2px 8px;background:var(--md-sys-color-error-container);color:var(--md-sys-color-error);border-radius:4px;">****</span>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function postAnnouncement() {
+  const text = document.getElementById('admin-announcement')?.value?.trim();
+  if (!text) { showSnackbar('Please enter announcement text'); return; }
+
+  STATE.announcement = text;
+  localStorage.setItem('bible_announcement', text);
+  loadAnnouncement();
+  showSnackbar('📢 Announcement posted globally!');
+
+  if (STATE.firebaseReady && STATE.db) {
+    STATE.db.collection('settings').doc('announcement').set({
+      text,
+      postedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      postedBy: STATE.user?.email
+    }).catch(e => console.warn('[Firestore] Announcement error:', e));
+  }
+}
+
+function clearAnnouncement() {
+  STATE.announcement = null;
+  localStorage.removeItem('bible_announcement');
+  document.getElementById('announcement-banner').classList.remove('visible');
+  showSnackbar('Announcement cleared');
+}
+
+function loadAnnouncement() {
+  const text = STATE.announcement || localStorage.getItem('bible_announcement');
+  if (text) {
+    STATE.announcement = text;
+    document.getElementById('announcement-text').textContent = text;
+    document.getElementById('announcement-banner').classList.add('visible');
+  }
+
+  if (STATE.firebaseReady && STATE.db) {
+    STATE.db.collection('settings').doc('announcement').get()
+      .then(doc => {
+        if (doc.exists && doc.data().text) {
+          const ann = doc.data().text;
+          STATE.announcement = ann;
+          document.getElementById('announcement-text').textContent = ann;
+          document.getElementById('announcement-banner').classList.add('visible');
+        }
+      }).catch(() => {});
+  }
+}
+
+function dismissAnnouncement() {
+  document.getElementById('announcement-banner').classList.remove('visible');
+}
+
+function loadAdminUsers() {
+  const container = document.getElementById('admin-users-list');
+  if (!STATE.firebaseReady || !STATE.db) {
+    container.innerHTML = '<p style="font-size:var(--typescale-body-small);color:var(--md-sys-color-on-surface-variant);">Connect Firebase to view users.</p>';
+    return;
+  }
+
+  container.innerHTML = '<p style="font-size:var(--typescale-body-small);color:var(--md-sys-color-on-surface-variant);">Loading...</p>';
+
+  STATE.db.collection('users').limit(50).get()
+    .then(snap => {
+      if (snap.empty) {
+        container.innerHTML = '<p style="font-size:var(--typescale-body-small);">No users found in Firestore users collection.</p>';
+        return;
+      }
+      container.innerHTML = snap.docs.map(doc => {
+        const u = doc.data();
+        return `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--md-shape-medium);background:var(--md-sys-color-surface-container);margin-bottom:6px;">
+          <div class="avatar" style="width:32px;height:32px;font-size:0.8rem;">${(u.displayName||'?')[0].toUpperCase()}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:var(--typescale-body-medium);font-weight:500;">${u.displayName||'Unknown'}</div>
+            <div style="font-size:var(--typescale-label-small);color:var(--md-sys-color-on-surface-variant);">${maskEmail(u.email||'')}</div>
+          </div>
+          <button class="btn-text" style="font-size:0.7rem;color:var(--md-sys-color-error);" onclick="adminBanUser('${doc.id}')">Remove</button>
+        </div>`;
+      }).join('');
+    })
+    .catch(e => {
+      container.innerHTML = `<p style="font-size:var(--typescale-body-small);color:var(--md-sys-color-error);">Error: ${e.message}</p>`;
+    });
+}
+
+function loadFlaggedContent() {
+  const container = document.getElementById('admin-flagged-list');
+  if (!STATE.firebaseReady || !STATE.db) {
+    container.innerHTML = '<p style="font-size:var(--typescale-body-small);color:var(--md-sys-color-on-surface-variant);">Connect Firebase to view flagged content.</p>';
+    return;
+  }
+
+  STATE.db.collection('notes').where('flagged', '==', true).limit(20).get()
+    .then(snap => {
+      if (snap.empty) {
+        container.innerHTML = '<p style="font-size:var(--typescale-body-small);color:var(--md-sys-color-on-surface-variant);">No flagged content.</p>';
+        return;
+      }
+      container.innerHTML = snap.docs.map(doc => {
+        const n = doc.data();
+        return `<div style="padding:10px;border-radius:var(--md-shape-medium);background:var(--md-sys-color-error-container);margin-bottom:6px;">
+          <div style="font-size:var(--typescale-label-medium);font-weight:600;color:var(--md-sys-color-error);">${maskEmail(n.email||'')} · ${n.verseRef||''}</div>
+          <p style="font-size:var(--typescale-body-small);margin:4px 0;">${n.text?.substring(0, 100)}...</p>
+          <button class="btn-text" style="font-size:0.7rem;color:var(--md-sys-color-error);" onclick="adminDeletePost('${doc.id}')">Delete</button>
+        </div>`;
+      }).join('');
+    }).catch(() => {});
+}
+
+function adminDeletePost(postId) {
+  if (!confirm('Delete this post permanently?')) return;
+  STATE.communityFeed = STATE.communityFeed.filter(p => p.id !== postId);
+  saveCommunityFeedToStorage();
+  showSnackbar('Post deleted');
+  loadCommunityFeed();
+
+  if (STATE.firebaseReady && STATE.db) {
+    STATE.db.collection('notes').doc(postId).delete().catch(() => {});
+  }
+}
+
+function adminDeletePrayer(prayerId) {
+  if (!confirm('Delete this prayer request?')) return;
+  STATE.prayerRequests = STATE.prayerRequests.filter(p => p.id !== prayerId);
+  showSnackbar('Prayer request deleted');
+  loadProfileContent();
+}
+
+function adminBanUser(userId) {
+  if (!confirm('Remove this user?')) return;
+  if (STATE.firebaseReady && STATE.db) {
+    STATE.db.collection('users').doc(userId).delete()
+      .then(() => { showSnackbar('User removed'); loadAdminUsers(); })
+      .catch(e => showSnackbar('Error: ' + e.message));
+  }
+}
+
+// =============================================================================
+// PROFANITY FILTER
+// =============================================================================
+function filterProfanity(text) {
+  if (!text) return '';
+  let filtered = text;
+  PROFANITY_LIST.forEach(word => {
+    const regex = new RegExp(`\\b${word}\\b`, 'gi');
+    filtered = filtered.replace(regex, '*'.repeat(word.length));
+  });
+  return filtered;
+}
+
+// =============================================================================
+// SETTINGS
+// =============================================================================
+function loadSettings() {
+  const saved = JSON.parse(localStorage.getItem('bible_settings') || '{}');
+  STATE.theme = saved.theme || 'light';
+  STATE.accentColor = saved.accentColor || '#4A90D9';
+  STATE.fontSize = saved.fontSize || 1;
+  STATE.fontWeight = saved.fontWeight || 400;
+  STATE.lineHeight = saved.lineHeight || 1.75;
+
+  applyTheme(STATE.theme);
+  applyAccentColor(STATE.accentColor);
+  applyReadingSettings();
+
+  loadNotes();
+  loadHighlights();
+}
+
+function saveSettings() {
+  localStorage.setItem('bible_settings', JSON.stringify({
+    theme: STATE.theme,
+    accentColor: STATE.accentColor,
+    fontSize: STATE.fontSize,
+    fontWeight: STATE.fontWeight,
+    lineHeight: STATE.lineHeight
+  }));
+}
+
+function setTheme(theme) {
+  STATE.theme = theme;
+  applyTheme(theme);
+  saveSettings();
+  // Re-render settings if visible
+  if (STATE.activeProfileTab === 'settings') loadProfileContent();
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const themeColors = {
+    light: '#4A90D9', dark: '#8DC4F5', midnight: '#A5C8FF', sepia: '#6B4C11'
+  };
+  const metaTheme = document.getElementById('theme-color-meta');
+  if (metaTheme) metaTheme.content = themeColors[theme] || '#4A90D9';
+}
+
+function setAccentColor(color) {
+  STATE.accentColor = color;
+  applyAccentColor(color);
+  saveSettings();
+  if (STATE.activeProfileTab === 'settings') loadProfileContent();
+}
+
+function applyAccentColor(color) {
+  document.documentElement.style.setProperty('--accent', color);
+  document.documentElement.style.setProperty('--md-sys-color-primary', color);
+
+  // Convert hex to RGB for rgba() usage
+  const r = parseInt(color.slice(1, 3), 16);
+  const g = parseInt(color.slice(3, 5), 16);
+  const b = parseInt(color.slice(5, 7), 16);
+  document.documentElement.style.setProperty('--accent-rgb', `${r}, ${g}, ${b}`);
+
+  // Update primary-container (lighter version)
+  document.documentElement.style.setProperty('--md-sys-color-primary-container', `rgba(${r}, ${g}, ${b}, 0.15)`);
+}
+
+function updateFontSize(val) {
+  STATE.fontSize = parseFloat(val);
+  applyReadingSettings();
+  saveSettings();
+  // Update label
+  const label = document.querySelector('[oninput="updateFontSize(this.value)"]')?.previousElementSibling?.querySelector('.settings-row-sub');
+  if (label) label.textContent = `${Math.round(STATE.fontSize * 16)}px`;
+}
+
+function updateFontWeight(val) {
+  STATE.fontWeight = parseInt(val);
+  applyReadingSettings();
+  saveSettings();
+  const label = document.querySelector('[oninput="updateFontWeight(this.value)"]')?.previousElementSibling?.querySelector('.settings-row-sub');
+  if (label) label.textContent = STATE.fontWeight;
+}
+
+function updateLineHeight(val) {
+  STATE.lineHeight = parseFloat(val);
+  applyReadingSettings();
+  saveSettings();
+  const label = document.querySelector('[oninput="updateLineHeight(this.value)"]')?.previousElementSibling?.querySelector('.settings-row-sub');
+  if (label) label.textContent = `${STATE.lineHeight}x`;
+}
+
+function applyReadingSettings() {
+  document.documentElement.style.setProperty('--user-font-size', `${STATE.fontSize}rem`);
+  document.documentElement.style.setProperty('--user-font-weight', STATE.fontWeight);
+  document.documentElement.style.setProperty('--user-line-height', STATE.lineHeight);
+}
+
+// =============================================================================
+// PWA INSTALL
+// =============================================================================
+function checkInstallStatus() {
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+
+  STATE.isInstalled = isInstalled;
+
+  if (!isInstalled) {
+    document.getElementById('install-profile-section').style.display = 'block';
+  }
+
+  window.addEventListener('appinstalled', () => {
+    STATE.isInstalled = true;
+    dismissInstallBanner();
+    document.getElementById('install-profile-section').style.display = 'none';
+    showSnackbar('✅ Bible app installed successfully!');
+  });
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  STATE.deferredInstallPrompt = e;
+  if (!STATE.isInstalled) {
+    document.getElementById('install-banner').classList.add('visible');
+  }
+});
+
+function triggerInstall() {
+  if (STATE.deferredInstallPrompt) {
+    STATE.deferredInstallPrompt.prompt();
+    STATE.deferredInstallPrompt.userChoice.then(choice => {
+      if (choice.outcome === 'accepted') {
+        STATE.deferredInstallPrompt = null;
+        dismissInstallBanner();
+        showSnackbar('✅ Installing Bible app...');
+      }
+    });
+  } else {
+    showSnackbar('Open in Chrome/Edge on Android or Safari on iOS, then use "Add to Home Screen"');
+  }
+}
+
+function dismissInstallBanner() {
+  document.getElementById('install-banner').classList.remove('visible');
+}
+
+// =============================================================================
+// NOTIFICATIONS
+// =============================================================================
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) {
+    showSnackbar('Notifications not supported in this browser');
+    return;
+  }
+
+  if (Notification.permission === 'granted') {
+    scheduleDailyVerseNotification();
+    showSnackbar('🔔 Notifications already enabled!');
+    return;
+  }
+
+  const permission = await Notification.requestPermission();
+  if (permission === 'granted') {
+    showSnackbar('🔔 Notifications enabled!');
+    scheduleDailyVerseNotification();
+    document.getElementById('notifications-btn').querySelector('.material-icons-round').textContent = 'notifications_active';
+  } else {
+    showSnackbar('Notifications blocked. Enable in browser settings.');
+  }
+}
+
+function scheduleDailyVerseNotification() {
+  // Schedule a local notification for the next day using setTimeout
+  // In production this would be handled by FCM or service worker push
+  const msUntil7am = getMsUntilHour(7);
+
+  setTimeout(() => {
+    if (!window.BIBLE_DATA) return;
+    const votds = window.BIBLE_DATA.verseOfTheDay;
+    const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % votds.length;
+    const votd = votds[dayIndex];
+
+    if (Notification.permission === 'granted' && !document.hasFocus()) {
+      new Notification('📖 Daily Bible Verse', {
+        body: `${votd.ref}: ${document.getElementById('votd-text')?.textContent || ''}`,
+        icon: './icon-192.png',
+        tag: 'daily-verse'
+      });
+    }
+  }, Math.min(msUntil7am, 60000)); // Cap at 1min for testing
+}
+
+function getMsUntilHour(hour) {
+  const now = new Date();
+  const target = new Date(now);
+  target.setHours(hour, 0, 0, 0);
+  if (target <= now) target.setDate(target.getDate() + 1);
+  return target - now;
+}
+
+function toggleNotifications(enabled) {
+  if (enabled) requestNotificationPermission();
+  else showSnackbar('Daily verse notifications disabled');
+}
+
+// Local fallback notification trigger
+function triggerLocalNotification(title, body, url) {
+  if (Notification.permission === 'granted') {
+    const n = new Notification(title, { body, icon: './icon-192.png', data: { url } });
+    n.onclick = () => { window.focus(); handleHashNavigation(url); };
+  } else if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: 'LOCAL_NOTIFY', title, body, url
+    });
+  }
+}
+
+// =============================================================================
+// OFFLINE STATUS
+// =============================================================================
+function updateOnlineStatus() {
+  STATE.isOnline = navigator.onLine;
+  const indicator = document.getElementById('offline-indicator');
+  const icon = document.getElementById('offline-icon');
+  const text = document.getElementById('offline-text');
+
+  if (STATE.isOnline) {
+    indicator.className = 'online';
+    icon.textContent = 'cloud_done';
+    text.textContent = 'Online';
+  } else {
+    indicator.className = 'offline';
+    icon.textContent = 'cloud_off';
+    text.textContent = 'Offline';
+    showSnackbar('📡 You are offline — using cached data');
+  }
+}
+
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+// =============================================================================
+// PROFILE ACTIONS
+// =============================================================================
+function openEditProfileDialog() {
+  openDialog(`
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;">Edit Profile</div>
+      <div>
+        <label style="font-size:var(--typescale-label-large);font-weight:500;display:block;margin-bottom:6px;">Display Name</label>
+        <input type="text" id="edit-name-input" value="${STATE.user?.displayName || ''}"
+          style="width:100%;padding:12px;border-radius:var(--md-shape-medium);border:1.5px solid var(--md-sys-color-outline-variant);background:var(--md-sys-color-surface-container);color:var(--md-sys-color-on-surface);font-family:var(--font-primary);font-size:var(--typescale-body-medium);outline:none;" />
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn-text" onclick="closeDialogDirect()">Cancel</button>
+        <button class="btn-filled" onclick="saveProfile()">
+          <span class="material-icons-round" style="font-size:18px;">save</span> Save
+        </button>
+      </div>
+    </div>`);
+}
+
+function saveProfile() {
+  const name = document.getElementById('edit-name-input')?.value?.trim();
+  if (!name) { showSnackbar('Name cannot be empty'); return; }
+
+  if (STATE.user && !STATE.user.isDemo) {
+    STATE.user.updateProfile({ displayName: name })
+      .then(() => {
+        STATE.user.displayName = name;
+        updateProfileUI();
+        closeDialogDirect();
+        showSnackbar('Profile updated!');
+      })
+      .catch(e => { showSnackbar('Error: ' + e.message); });
+  } else {
+    if (STATE.user) STATE.user.displayName = name;
+    updateProfileUI();
+    closeDialogDirect();
+    showSnackbar('Profile updated!');
+  }
+}
+
+function changeAvatar() {
+  showSnackbar('Avatar is synced from your Google account. Change it in Google settings.');
+}
+
+function loadReaderContent() {
+  buildBookLists();
+  renderChapter();
+}
+
+// =============================================================================
+// LOADER UTILITY
+// =============================================================================
+function showSnackbar(message, duration = 3000) {
+  const el = document.getElementById('snackbar');
+  el.textContent = message;
+  el.classList.add('show');
+  clearTimeout(el._timeout);
+  el._timeout = setTimeout(() => el.classList.remove('show'), duration);
+}
+
+function getTimeAgo(isoString) {
+  if (!isoString) return '';
+  const diff = Date.now() - new Date(isoString).getTime();
+  const seconds = Math.floor(diff / 1000);
+  if (seconds < 60) return 'just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+function showReadme() {
+  openBottomSheet(`
+    <div style="font-family:var(--font-mono);font-size:0.8rem;line-height:1.7;color:var(--md-sys-color-on-surface);">
+      <div style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin-bottom:16px;font-style:normal;">📄 README.md</div>
+      <pre style="white-space:pre-wrap;font-family:var(--font-mono);font-size:0.78rem;line-height:1.7;">${README_TEXT.trim()}</pre>
+    </div>`);
+}
+
+// =============================================================================
+// README TEXT (embedded at bottom per spec)
+// =============================================================================
+const README_TEXT = `
+# Bible PWA — Complete Study Application
+
+## Overview
+
+This is a fully self-contained Progressive Web App (PWA) built as a Single Page
+Application (SPA) using pure HTML5, CSS3 (Material Design 3), and vanilla
+JavaScript. It requires ZERO compilation, ZERO npm packages, and ZERO terminal
+commands. It runs directly in any modern browser.
+
+---
+
+## How the Application Engine Works
+
+The app uses a central STATE object for all UI updates, preventing mismatched
+rendering bugs. Navigation is handled by view switching (hide/show) rather than
+URL routing, making it fully compatible with static hosting.
+
+Bible text is externalized to bibleData.js and loaded via <script src="bibleData.js">.
+This keeps the main HTML lightweight while keeping all text easily editable.
+
+The service worker (sw.js) caches all assets for offline use and handles push
+notification payloads from Firebase Cloud Messaging.
+
+---
+
+## Firebase Setup
+
+1. Go to https://console.firebase.google.com
+2. Create a new project
+3. Click "Add App" → Web
+4. Copy your config values into the FIREBASE_CONFIG block at the top of index.html:
+
+   const FIREBASE_CONFIG = {
+     apiKey:            "AIzaSy...",
+     authDomain:        "yourapp.firebaseapp.com",
+     projectId:         "yourapp",
+     storageBucket:     "yourapp.appspot.com",
+     messagingSenderId: "123456789",
+     appId:             "1:123:web:abc"
+   };
+
+5. Enable Google Sign-In:
+   Firebase Console → Authentication → Sign-in method → Google → Enable
+
+6. Create Firestore Database:
+   Firebase Console → Firestore Database → Create database → Start in test mode
+
+7. Add authorized domains:
+   Firebase Console → Authentication → Settings → Authorized domains
+   → Add: yourusername.github.io
+
+---
+
+## GitHub Pages Deployment
+
+1. Create a GitHub repository (e.g. "bible-pwa")
+
+2. Push these files to the repository:
+   - index.html
+   - bibleData.js
+   - sw.js
+   - manifest.json (create one — see below)
+
+3. Enable GitHub Pages:
+   Repository → Settings → Pages → Deploy from branch → main → / (root)
+
+4. Your app will be live at:
+   https://yourusername.github.io/bible-pwa/
+
+5. IMPORTANT — Service Worker Scope:
+   The sw.js uses relative paths (./index.html, ./bibleData.js) which
+   automatically resolve correctly in a sub-directory on GitHub Pages.
+   The manifest.json start_url should be set to "./index.html" for
+   sub-directory compatibility.
+
+6. IMPORTANT — Firebase Authorized Domains:
+   Add "yourusername.github.io" to Firebase authorized domains or
+   Google Sign-In will be blocked.
+
+---
+
+## manifest.json Template
+
+   {
+     "name": "Bible — Word of God",
+     "short_name": "Bible",
+     "description": "Complete Bible study PWA",
+     "start_url": "./index.html",
+     "display": "standalone",
+     "background_color": "#F8F9FC",
+     "theme_color": "#4A90D9",
+     "orientation": "portrait-primary",
+     "icons": [
+       { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" },
+       { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png" }
+     ]
+   }
+
+---
+
+## bibleData.js Schema
+
+   window.BIBLE_DATA = {
+     books: { OT: [...], NT: [...], all: [...] },
+     chapterCounts: { "Genesis": 50, ... },
+     intros: {
+       "Genesis": { author, date, theme, context, keyVerses }
+     },
+     versions: {
+       ESV: { "Genesis": { 1: { 1: "verse text", 2: "..." } } },
+       NIV: { ... },
+       NLT: { ... },
+       RSV: { ... }
+     },
+     commentary: {
+       "Genesis-1-1": { title, explanation, wordOrigins, context }
+     },
+     crossRefs: { "Genesis-1-1": ["John-1-1"] },
+     divineWords: { "Genesis-1-3": true },
+     verseOfTheDay: [ { ref, book, chapter, verse, reflection } ],
+     readingPlans: [ { id, name, description, totalDays, books } ]
+   }
+
+---
+
+Maintained by: buenavistaaglinaodanny@gmail.com
+License: MIT
+`;
+
+// =============================================================================
+// SERVICE WORKER REGISTRATION
+// =============================================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then(reg => {
+        console.log('[SW] Registered:', reg.scope);
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              showSnackbar('App updated! Refresh for the latest version.');
+            }
+          });
+        });
+
+        // Try FCM after SW is registered
+        initFCM(reg);
+      })
+      .catch(err => console.warn('[SW] Registration failed:', err));
+
+    // Handle SW messages (for deep-link notifications)
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data?.type === 'NOTIFICATION_CLICK') {
+        handleHashNavigation(event.data.url);
+      }
+    });
+  });
+}
+
+// =============================================================================
+// FIREBASE CLOUD MESSAGING (with local fallback)
+// =============================================================================
+function initFCM(swRegistration) {
+  if (!STATE.firebaseReady || typeof firebase === 'undefined') {
+    console.log('[FCM] Firebase not ready — using local notifications only');
+    return;
+  }
+
+  try {
+    const messaging = firebase.messaging();
+
+    messaging.getToken({
+      vapidKey: 'YOUR_VAPID_KEY_HERE', // Replace with your FCM VAPID key
+      serviceWorkerRegistration: swRegistration
+    }).then(token => {
+      if (token) {
+        console.log('[FCM] Token received:', token.substring(0, 20) + '...');
+        if (STATE.db && STATE.user) {
+          STATE.db.collection('fcmTokens').doc(STATE.user.uid).set({
+            token, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      }
+    }).catch(err => {
+      console.warn('[FCM] Token error (falling back to local):', err.code);
+      // Fallback: Use local Web Notifications for alerts
+    });
+
+    messaging.onMessage(payload => {
+      console.log('[FCM] Foreground message:', payload);
+      const { title, body, url } = payload.notification || {};
+      showSnackbar(body || title || 'New notification');
+      if (url) {
+        // Show notification banner with action
+        triggerLocalNotification(title, body, url);
+      }
+    });
+  } catch (e) {
+    console.warn('[FCM] Init failed (using local fallback):', e.message);
+  }
+}
+
+// =============================================================================
+// CLOSE MENUS ON OUTSIDE CLICK
+// =============================================================================
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('contextual-menu');
+  if (menu && !menu.contains(e.target)) {
+    closeContextualMenu();
+    clearVerseSelection();
+  }
+});
+
+// =============================================================================
+// RESIZE HANDLER
+// =============================================================================
+window.addEventListener('resize', () => {
+  const parallelBtn = document.getElementById('parallel-btn');
+  if (parallelBtn) {
+    parallelBtn.style.display = window.innerWidth >= 900 ? 'flex' : 'none';
+  }
+});
+
+// =============================================================================
+// BOOT SEQUENCE
+// =============================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('[App] 🚀 Bible PWA booting...');
+
+  // Initialize Firebase
+  const fbReady = initFirebase();
+
+  if (!fbReady) {
+    // Show login screen for user to sign in (demo mode available)
+    console.log('[App] Firebase not configured — demo mode available via login screen');
+    showLastUserChip();
+  }
+
+  // Initial online status
+  updateOnlineStatus();
+
+  // Handle hash on load
+  if (window.location.hash) {
+    STATE.pendingHash = window.location.hash;
+  }
+
+  console.log('[App] ✅ Boot sequence complete');
+});
+</script>
+
+<!--
+=============================================================================
+README.md — EMBEDDED DOCUMENTATION
+=============================================================================
+
+# Bible PWA — Complete Study Application
+## v1.0.0 | Zero-Dependency Browser SPA
+
+### Overview
+This is a fully self-contained Progressive Web App (PWA) built as a Single
+Page Application (SPA) using pure HTML5, CSS3 (Material Design 3), and
+vanilla JavaScript. It requires ZERO compilation, ZERO npm packages, and
+ZERO terminal commands.
+
+### Files Required
+- index.html   — Main application (this file)
+- bibleData.js — All Bible text, commentary, and study data
+- sw.js        — Service Worker for offline/PWA support
+- manifest.json — PWA manifest for installation
+
+### Firebase Setup
+1. Go to https://console.firebase.google.com
+2. Create a project → Add Web App
+3. Copy firebaseConfig into FIREBASE_CONFIG at top of <script> in index.html
+4. Enable Google Sign-In: Authentication → Sign-in method → Google
+5. Create Firestore: Database → Create database (test mode)
+6. Add GitHub Pages domain to authorized domains
+
+### GitHub Pages Deployment
+1. Create GitHub repo (e.g. "bible-pwa")
+2. Push all 4 files to repo root
+3. Settings → Pages → Deploy from main branch / root
+4. Live at: https://yourusername.github.io/bible-pwa/
+
+### Service Worker on GitHub Pages Sub-directory
+The sw.js uses relative paths (./index.html etc.) — this works correctly
+in sub-directories on GitHub Pages without any build step.
+The manifest.json start_url should be "./index.html"
+
+### Admin Access
+Set ADMIN_EMAIL constant to your email. When signed in as admin,
+an "Admin" tab appears in the Profile section.
+
+=============================================================================
+-->
+
+</body>
+</html>

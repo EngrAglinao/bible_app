@@ -1,0 +1,45 @@
+{
+  "name": "Bible — Word of God",
+  "short_name": "Bible",
+  "description": "A beautiful, full-featured Bible PWA with study tools, community, and prayer. Works offline.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F8F9FC",
+  "theme_color": "#4A90D9",
+  "lang": "en",
+  "categories": ["books", "education", "lifestyle"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%234A90D9'/><text x='96' y='140' font-size='110' text-anchor='middle' font-family='serif'>📖</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%234A90D9'/><text x='256' y='360' font-size='290' text-anchor='middle' font-family='serif'>📖</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Read Bible",
+      "short_name": "Read",
+      "description": "Open the Bible reader",
+      "url": "./index.html#reader",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><text y='80' font-size='80'>📖</text></svg>", "sizes": "96x96" }]
+    },
+    {
+      "name": "Prayer Wall",
+      "short_name": "Prayer",
+      "description": "Open the prayer wall",
+      "url": "./index.html#prayer",
+      "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><text y='80' font-size='80'>🙏</text></svg>", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
