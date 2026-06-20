@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="light" data-font="google-sans">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -11,10 +11,22 @@
   <meta name="apple-mobile-web-app-title" content="BibleVault" />
   <title>BibleVault — Scripture Study PWA</title>
 
-  <!-- Google Fonts: Google Sans -->
+  <!-- Google Sans Flex (official Google product typeface, served via Fontsource/jsDelivr) -->
+  <style>
+    @font-face {
+      font-family: 'Google Sans Flex';
+      font-style: normal;
+      font-display: swap;
+      font-weight: 100 900;
+      src: url('https://cdn.jsdelivr.net/fontsource/fonts/google-sans-flex:vf@latest/latin-wght-normal.woff2') format('woff2-variations');
+      unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+  </style>
+
+  <!-- Google Fonts: alternative font options (Settings > Appearance) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Google+Sans+Display:wght@400;500;700&family=Google+Sans+Text:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Inter:ital,wght@0,400;0,500;0,700;1,400&family=Noto+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Literata:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
 
   <!-- Material Design Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
@@ -201,13 +213,207 @@
       --md-sys-elevation-4: 0 6px 12px rgba(100,70,30,0.28);
     }
 
-    /* ============================================================
-       TYPOGRAPHY SCALE — Google Sans
-    ============================================================ */
-    :root {
-      --font-primary:  'Google Sans', 'Google Sans Text', sans-serif;
-      --font-display:  'Google Sans Display', 'Google Sans', sans-serif;
+    /* --- FOREST THEME (deep emerald/moss, light) --- */
+    [data-theme="forest"] {
+      --md-sys-color-primary:           #2f5233;
+      --md-sys-color-on-primary:        #ffffff;
+      --md-sys-color-primary-container: #b8e6bb;
+      --md-sys-color-on-primary-container: #00210a;
+      --md-sys-color-secondary:         #51664e;
+      --md-sys-color-on-secondary:      #ffffff;
+      --md-sys-color-secondary-container: #d3ead0;
+      --md-sys-color-on-secondary-container: #0f1f0e;
+      --md-sys-color-tertiary:          #386569;
+      --md-sys-color-on-tertiary:       #ffffff;
+      --md-sys-color-tertiary-container: #bcebef;
+      --md-sys-color-on-tertiary-container: #002022;
+      --md-sys-color-error:             #ba1a1a;
+      --md-sys-color-on-error:          #ffffff;
+      --md-sys-color-error-container:   #ffdad6;
+      --md-sys-color-background:        #eef5ea;
+      --md-sys-color-on-background:     #181f17;
+      --md-sys-color-surface:           #eef5ea;
+      --md-sys-color-on-surface:        #181f17;
+      --md-sys-color-surface-variant:   #dce5d6;
+      --md-sys-color-on-surface-variant:#414941;
+      --md-sys-color-outline:           #717970;
+      --md-sys-color-outline-variant:   #c1c9bf;
+      --md-sys-color-surface-container-lowest:  #ffffff;
+      --md-sys-color-surface-container-low:     #e8f0e3;
+      --md-sys-color-surface-container:         #e2eadd;
+      --md-sys-color-surface-container-high:    #dce4d7;
+      --md-sys-color-surface-container-highest: #d7ded1;
+      --md-sys-color-inverse-surface:   #2c322b;
+      --md-sys-color-inverse-on-surface:#eef2e8;
+      --md-sys-color-inverse-primary:   #9dd9a0;
+      --md-sys-color-scrim:             rgba(0,0,0,0.5);
+      --md-sys-color-divine-words:      #ad3a1f;
+      --md-sys-color-praise-gold:       #c9920a;
+      --md-sys-color-praise-gold-container: #fff3cd;
+      --md-sys-elevation-1: 0 1px 2px rgba(20,40,20,0.08), 0 1px 3px rgba(20,40,20,0.06);
+      --md-sys-elevation-2: 0 2px 6px rgba(20,40,20,0.10), 0 1px 4px rgba(20,40,20,0.08);
+      --md-sys-elevation-3: 0 4px 8px rgba(20,40,20,0.12), 0 2px 4px rgba(20,40,20,0.08);
+      --md-sys-elevation-4: 0 6px 12px rgba(20,40,20,0.14);
+    }
 
+    /* --- ROSE THEME (warm rosewood, light) --- */
+    [data-theme="rose"] {
+      --md-sys-color-primary:           #9c3d54;
+      --md-sys-color-on-primary:        #ffffff;
+      --md-sys-color-primary-container: #ffd9e0;
+      --md-sys-color-on-primary-container: #3f0017;
+      --md-sys-color-secondary:         #75565b;
+      --md-sys-color-on-secondary:      #ffffff;
+      --md-sys-color-secondary-container: #ffd9dd;
+      --md-sys-color-on-secondary-container: #2b1417;
+      --md-sys-color-tertiary:          #7c5733;
+      --md-sys-color-on-tertiary:       #ffffff;
+      --md-sys-color-tertiary-container: #ffdcbb;
+      --md-sys-color-on-tertiary-container: #2c1600;
+      --md-sys-color-error:             #ba1a1a;
+      --md-sys-color-on-error:          #ffffff;
+      --md-sys-color-error-container:   #ffdad6;
+      --md-sys-color-background:        #fff0f3;
+      --md-sys-color-on-background:     #22191b;
+      --md-sys-color-surface:           #fff0f3;
+      --md-sys-color-on-surface:        #22191b;
+      --md-sys-color-surface-variant:   #f3dde0;
+      --md-sys-color-on-surface-variant:#524345;
+      --md-sys-color-outline:           #847375;
+      --md-sys-color-outline-variant:   #d6c1c4;
+      --md-sys-color-surface-container-lowest:  #ffffff;
+      --md-sys-color-surface-container-low:     #fdeaed;
+      --md-sys-color-surface-container:         #f8e4e7;
+      --md-sys-color-surface-container-high:    #f2dee1;
+      --md-sys-color-surface-container-highest: #ecd8db;
+      --md-sys-color-inverse-surface:   #392e30;
+      --md-sys-color-inverse-on-surface:#ffecee;
+      --md-sys-color-inverse-primary:   #ffb1c1;
+      --md-sys-color-scrim:             rgba(40,0,10,0.5);
+      --md-sys-color-divine-words:      #b3261e;
+      --md-sys-color-praise-gold:       #c17900;
+      --md-sys-color-praise-gold-container: #fff3cd;
+      --md-sys-elevation-1: 0 1px 2px rgba(80,20,30,0.08), 0 1px 3px rgba(80,20,30,0.06);
+      --md-sys-elevation-2: 0 2px 6px rgba(80,20,30,0.10), 0 1px 4px rgba(80,20,30,0.08);
+      --md-sys-elevation-3: 0 4px 8px rgba(80,20,30,0.12), 0 2px 4px rgba(80,20,30,0.08);
+      --md-sys-elevation-4: 0 6px 12px rgba(80,20,30,0.14);
+    }
+
+    /* --- OCEAN THEME (teal/cyan, light) --- */
+    [data-theme="ocean"] {
+      --md-sys-color-primary:           #0e6b7a;
+      --md-sys-color-on-primary:        #ffffff;
+      --md-sys-color-primary-container: #aeeff8;
+      --md-sys-color-on-primary-container: #002025;
+      --md-sys-color-secondary:         #4a6267;
+      --md-sys-color-on-secondary:      #ffffff;
+      --md-sys-color-secondary-container: #cde7ec;
+      --md-sys-color-on-secondary-container: #051f22;
+      --md-sys-color-tertiary:          #4f5d7d;
+      --md-sys-color-on-tertiary:       #ffffff;
+      --md-sys-color-tertiary-container: #dae1ff;
+      --md-sys-color-on-tertiary-container: #091a39;
+      --md-sys-color-error:             #ba1a1a;
+      --md-sys-color-on-error:          #ffffff;
+      --md-sys-color-error-container:   #ffdad6;
+      --md-sys-color-background:        #eaf6f8;
+      --md-sys-color-on-background:     #161d1e;
+      --md-sys-color-surface:           #eaf6f8;
+      --md-sys-color-on-surface:        #161d1e;
+      --md-sys-color-surface-variant:   #d7e4e6;
+      --md-sys-color-on-surface-variant:#3f484a;
+      --md-sys-color-outline:           #6f797a;
+      --md-sys-color-outline-variant:   #bec8ca;
+      --md-sys-color-surface-container-lowest:  #ffffff;
+      --md-sys-color-surface-container-low:     #e4f0f2;
+      --md-sys-color-surface-container:         #deebed;
+      --md-sys-color-surface-container-high:    #d8e5e7;
+      --md-sys-color-surface-container-highest: #d2dfe1;
+      --md-sys-color-inverse-surface:   #2b3233;
+      --md-sys-color-inverse-on-surface:#eaf2f3;
+      --md-sys-color-inverse-primary:   #8ad4e3;
+      --md-sys-color-scrim:             rgba(0,0,0,0.5);
+      --md-sys-color-divine-words:      #c62828;
+      --md-sys-color-praise-gold:       #b8860b;
+      --md-sys-color-praise-gold-container: #fff3cd;
+      --md-sys-elevation-1: 0 1px 2px rgba(0,40,45,0.08), 0 1px 3px rgba(0,40,45,0.06);
+      --md-sys-elevation-2: 0 2px 6px rgba(0,40,45,0.10), 0 1px 4px rgba(0,40,45,0.08);
+      --md-sys-elevation-3: 0 4px 8px rgba(0,40,45,0.12), 0 2px 4px rgba(0,40,45,0.08);
+      --md-sys-elevation-4: 0 6px 12px rgba(0,40,45,0.14);
+    }
+
+    /* --- AMOLED THEME (true pure black, battery-saving) --- */
+    [data-theme="amoled"] {
+      --md-sys-color-primary:           #8fd9a8;
+      --md-sys-color-on-primary:        #00391f;
+      --md-sys-color-primary-container: #00522e;
+      --md-sys-color-on-primary-container: #b0f4c4;
+      --md-sys-color-secondary:         #b5ccba;
+      --md-sys-color-on-secondary:      #21352a;
+      --md-sys-color-secondary-container: #374b3e;
+      --md-sys-color-on-secondary-container: #d1e8d8;
+      --md-sys-color-tertiary:          #95cedf;
+      --md-sys-color-on-tertiary:       #00343f;
+      --md-sys-color-tertiary-container: #1d4d59;
+      --md-sys-color-on-tertiary-container: #b8e9fb;
+      --md-sys-color-error:             #ffb4ab;
+      --md-sys-color-on-error:          #690005;
+      --md-sys-color-error-container:   #93000a;
+      --md-sys-color-background:        #000000;
+      --md-sys-color-on-background:     #e1e3e0;
+      --md-sys-color-surface:           #000000;
+      --md-sys-color-on-surface:        #e1e3e0;
+      --md-sys-color-surface-variant:   #3f4945;
+      --md-sys-color-on-surface-variant:#bfc9c4;
+      --md-sys-color-outline:           #89938e;
+      --md-sys-color-outline-variant:   #3f4945;
+      --md-sys-color-surface-container-lowest:  #000000;
+      --md-sys-color-surface-container-low:     #0a0c0a;
+      --md-sys-color-surface-container:         #121412;
+      --md-sys-color-surface-container-high:    #1c1f1c;
+      --md-sys-color-surface-container-highest: #272a27;
+      --md-sys-color-inverse-surface:   #e1e3e0;
+      --md-sys-color-inverse-on-surface:#1c1f1c;
+      --md-sys-color-inverse-primary:   #1a6b3c;
+      --md-sys-color-scrim:             rgba(0,0,0,0.9);
+      --md-sys-color-divine-words:      #ff8a80;
+      --md-sys-color-praise-gold:       #ffd740;
+      --md-sys-color-praise-gold-container: #0d0a00;
+      --md-sys-elevation-1: 0 1px 3px rgba(0,255,150,0.06), 0 1px 2px rgba(0,0,0,0.6);
+      --md-sys-elevation-2: 0 2px 6px rgba(0,255,150,0.08), 0 1px 4px rgba(0,0,0,0.65);
+      --md-sys-elevation-3: 0 4px 10px rgba(0,0,0,0.75);
+      --md-sys-elevation-4: 0 6px 16px rgba(0,0,0,0.85);
+    }
+
+    /* ============================================================
+       TYPOGRAPHY SCALE — Google Sans Flex (default) + alternatives
+    ============================================================ */
+    :root, [data-font="google-sans"] {
+      --font-primary:  'Google Sans Flex', 'Roboto', system-ui, sans-serif;
+      --font-display:  'Google Sans Flex', 'Roboto', system-ui, sans-serif;
+    }
+    [data-font="roboto"] {
+      --font-primary:  'Roboto', system-ui, sans-serif;
+      --font-display:  'Roboto', system-ui, sans-serif;
+    }
+    [data-font="inter"] {
+      --font-primary:  'Inter', system-ui, sans-serif;
+      --font-display:  'Inter', system-ui, sans-serif;
+    }
+    [data-font="noto-sans"] {
+      --font-primary:  'Noto Sans', system-ui, sans-serif;
+      --font-display:  'Noto Sans', system-ui, sans-serif;
+    }
+    [data-font="literata"] {
+      --font-primary:  'Literata', Georgia, serif;
+      --font-display:  'Literata', Georgia, serif;
+    }
+    [data-font="system"] {
+      --font-primary:  -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-display:  -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    }
+
+    :root {
       /* Dynamic typography — controlled by accessibility sliders */
       --type-scale:        1;
       --font-weight-base:  400;
@@ -220,14 +426,14 @@
       --md-sys-typescale-headline-medium:calc(28px * var(--type-scale));
       --md-sys-typescale-headline-small: calc(24px * var(--type-scale));
       --md-sys-typescale-title-large:    calc(22px * var(--type-scale));
-      --md-sys-typescale-title-medium:   calc(16px * var(--type-scale));
-      --md-sys-typescale-title-small:    calc(14px * var(--type-scale));
-      --md-sys-typescale-body-large:     calc(16px * var(--type-scale));
-      --md-sys-typescale-body-medium:    calc(14px * var(--type-scale));
-      --md-sys-typescale-body-small:     calc(12px * var(--type-scale));
-      --md-sys-typescale-label-large:    calc(14px * var(--type-scale));
-      --md-sys-typescale-label-medium:   calc(12px * var(--type-scale));
-      --md-sys-typescale-label-small:    calc(11px * var(--type-scale));
+      --md-sys-typescale-title-medium:   calc(17px * var(--type-scale));
+      --md-sys-typescale-title-small:    calc(15px * var(--type-scale));
+      --md-sys-typescale-body-large:     calc(17px * var(--type-scale));
+      --md-sys-typescale-body-medium:    calc(15px * var(--type-scale));
+      --md-sys-typescale-body-small:     calc(13.5px * var(--type-scale));
+      --md-sys-typescale-label-large:    calc(15px * var(--type-scale));
+      --md-sys-typescale-label-medium:   calc(13px * var(--type-scale));
+      --md-sys-typescale-label-small:    calc(12.5px * var(--type-scale));
 
       /* Shape */
       --md-sys-shape-corner-none:       0px;
@@ -456,13 +662,13 @@
     .btn-sm { padding: 6px 16px; font-size: var(--md-sys-typescale-label-medium); }
     .btn-icon {
       width: 40px; height: 40px;
-      padding: 0; border-radius: var(--md-sys-shape-corner-medium);
-      background: transparent;
+      padding: 0; border: none; border-radius: 50%;
+      background: none;
       color: var(--md-sys-color-on-surface-variant);
-      transition: background 0.15s, color 0.15s;
+      transition: color 0.15s, transform 0.1s;
     }
-    .btn-icon:hover { background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent); }
-    .btn-icon:active { background: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent); }
+    .btn-icon::after { display: none; }
+    .btn-icon:active { transform: scale(0.92); color: var(--md-sys-color-primary); }
     .btn-icon.active { color: var(--md-sys-color-primary); }
     .btn-icon-filled {
       background: var(--md-sys-color-primary);
@@ -555,22 +761,24 @@
     .text-field input,
     .text-field textarea,
     .text-field select {
-      background: var(--md-sys-color-surface-container-highest);
-      border: 1px solid var(--md-sys-color-outline);
-      border-radius: var(--md-sys-shape-corner-extra-small);
+      background: var(--md-sys-color-surface-container-high);
+      border: none;
+      border-bottom: 1.5px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small) 0 0;
       color: var(--md-sys-color-on-surface);
       font-family: var(--font-primary);
       font-size: var(--md-sys-typescale-body-large);
       padding: 12px 16px;
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color 0.2s, background 0.2s;
       width: 100%;
     }
     .text-field input:focus,
     .text-field textarea:focus,
     .text-field select:focus {
-      border-color: var(--md-sys-color-primary);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
+      border-bottom-color: var(--md-sys-color-primary);
+      border-bottom-width: 2px;
+      background: var(--md-sys-color-surface-container-highest);
     }
     .text-field textarea { resize: vertical; min-height: 80px; }
 
@@ -1482,6 +1690,26 @@
       margin: 0 auto 6px;
       border: 1px solid var(--md-sys-color-outline-variant);
     }
+    .font-option {
+      border-radius: var(--md-sys-shape-corner-medium);
+      padding: 10px 8px;
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid transparent;
+      background: var(--md-sys-color-surface-container-high);
+      transition: border-color 0.2s, background 0.2s;
+      font-size: var(--md-sys-typescale-label-small);
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .font-option.selected { border-color: var(--md-sys-color-primary); background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
+    .font-option .font-sample {
+      font-size: 20px;
+      margin-bottom: 4px;
+      color: var(--md-sys-color-on-surface);
+      line-height: 1.2;
+    }
+    .font-option.selected .font-sample { color: var(--md-sys-color-on-primary-container); }
 
     input[type="range"].md-slider {
       -webkit-appearance: none;
@@ -1567,7 +1795,7 @@
     .search-bar {
       display: flex; align-items: center; gap: 8px;
       background: var(--md-sys-color-surface-container-highest);
-      border: 1px solid var(--md-sys-color-outline-variant);
+      border: none;
       border-radius: var(--md-sys-shape-corner-full);
       padding: 8px 16px;
       flex: 1;
@@ -1886,7 +2114,7 @@
             </div>
 
             <!-- Version Selector -->
-            <select class="text-field" id="version-select" onchange="onVersionChange(this.value)" style="padding:6px 10px;border-radius:var(--md-sys-shape-corner-full);font-size:var(--md-sys-typescale-label-medium);min-width:70px;background:var(--md-sys-color-surface-container-highest);border:1px solid var(--md-sys-color-outline-variant);color:var(--md-sys-color-on-surface);font-family:var(--font-primary);">
+            <select class="text-field" id="version-select" onchange="onVersionChange(this.value)" style="padding:6px 10px;border-radius:var(--md-sys-shape-corner-full);font-size:var(--md-sys-typescale-label-medium);min-width:70px;background:var(--md-sys-color-surface-container-highest);border:none;color:var(--md-sys-color-on-surface);font-family:var(--font-primary);">
               <option value="ESV">ESV</option>
               <option value="NIV">NIV</option>
               <option value="NLT">NLT</option>
@@ -2225,6 +2453,53 @@
           <div class="theme-swatch" style="background:linear-gradient(135deg,#f5efe4,#7b5e3a);"></div>
           Sepia
         </div>
+        <div class="theme-option" data-theme="forest" onclick="setTheme('forest')">
+          <div class="theme-swatch" style="background:linear-gradient(135deg,#eef5ea,#2f5233);"></div>
+          Forest
+        </div>
+        <div class="theme-option" data-theme="rose" onclick="setTheme('rose')">
+          <div class="theme-swatch" style="background:linear-gradient(135deg,#fff0f3,#9c3d54);"></div>
+          Rose
+        </div>
+        <div class="theme-option" data-theme="ocean" onclick="setTheme('ocean')">
+          <div class="theme-swatch" style="background:linear-gradient(135deg,#eaf6f8,#0e6b7a);"></div>
+          Ocean
+        </div>
+        <div class="theme-option" data-theme="amoled" onclick="setTheme('amoled')">
+          <div class="theme-swatch" style="background:linear-gradient(135deg,#000000,#e0e0e0);"></div>
+          AMOLED
+        </div>
+      </div>
+    </div>
+
+    <!-- Font Family -->
+    <div class="settings-section">
+      <div class="settings-section-title">Font</div>
+      <div class="theme-grid">
+        <div class="font-option selected" data-font="google-sans" onclick="setFontFamily('google-sans')">
+          <div class="font-sample" style="font-family:'Google Sans Flex','Roboto',sans-serif;">Aa</div>
+          Google Sans
+        </div>
+        <div class="font-option" data-font="roboto" onclick="setFontFamily('roboto')">
+          <div class="font-sample" style="font-family:'Roboto',sans-serif;">Aa</div>
+          Roboto
+        </div>
+        <div class="font-option" data-font="inter" onclick="setFontFamily('inter')">
+          <div class="font-sample" style="font-family:'Inter',sans-serif;">Aa</div>
+          Inter
+        </div>
+        <div class="font-option" data-font="noto-sans" onclick="setFontFamily('noto-sans')">
+          <div class="font-sample" style="font-family:'Noto Sans',sans-serif;">Aa</div>
+          Noto Sans
+        </div>
+        <div class="font-option" data-font="literata" onclick="setFontFamily('literata')">
+          <div class="font-sample" style="font-family:'Literata',Georgia,serif;">Aa</div>
+          Literata
+        </div>
+        <div class="font-option" data-font="system" onclick="setFontFamily('system')">
+          <div class="font-sample" style="font-family:-apple-system,system-ui,sans-serif;">Aa</div>
+          System
+        </div>
       </div>
     </div>
 
@@ -2294,6 +2569,36 @@
           <div class="switch-track"></div>
           <div class="switch-thumb"></div>
         </label>
+      </div>
+    </div>
+
+    <!-- Audio Reader Voice -->
+    <div class="settings-section">
+      <div class="settings-section-title">Audio Reader Voice</div>
+      <div class="settings-row">
+        <div class="settings-row-label">
+          <div class="title">Voice</div>
+          <div class="desc">Defaults to the deepest male voice available on this device</div>
+        </div>
+        <select class="text-field" id="tts-voice-select" onchange="setTTSVoice(this.value)" style="padding:8px 12px;border-radius:var(--md-sys-shape-corner-small);font-size:var(--md-sys-typescale-label-medium);max-width:160px;background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface);font-family:var(--font-primary);">
+          <option value="auto">Auto (Deep Male)</option>
+        </select>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label">
+          <div class="title">Pitch</div>
+          <div class="desc" id="tts-pitch-label">Deep (0.65)</div>
+        </div>
+        <input type="range" class="md-slider" min="0.3" max="1.5" step="0.05" value="0.65"
+               id="tts-pitch-slider" oninput="setTTSPitch(this.value)" style="width:140px;" />
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label">
+          <div class="title">Reading Speed</div>
+          <div class="desc" id="tts-rate-label">0.88x</div>
+        </div>
+        <input type="range" class="md-slider" min="0.5" max="1.5" step="0.05" value="0.88"
+               id="tts-rate-slider" oninput="setTTSRate(this.value)" style="width:140px;" />
       </div>
     </div>
 
@@ -2398,6 +2703,9 @@ const STATE = {
   ttsActive:      false,
   ttsUtterance:   null,
   ttsVerseIndex:  0,
+  ttsVoiceName:   'auto',
+  ttsPitch:       0.65,
+  ttsRate:        0.88,
   highlights:     {},   // { "Book-Ch-V": "hl-yellow" }
   notes:          {},   // { "Book-Ch-V": { text, public, ts } }
   communityPosts: [],
@@ -2407,6 +2715,7 @@ const STATE = {
   streak:         0,
   lastReadDate:   null,
   theme:          'light',
+  fontFamily:     'google-sans',
   typeScale:      1,
   fontWeight:     400,
   lineHeight:     1.6,
@@ -3392,6 +3701,108 @@ window.setParallel = function(on) {
 // ================================================================
 let speechSynth = window.speechSynthesis;
 let ttsTimeout;
+let cachedVoices = [];
+
+// Known deep/male system voice names across major platforms & browsers,
+// ordered roughly by how deep/rich they tend to sound.
+const DEEP_MALE_VOICE_HINTS = [
+  'Google UK English Male',
+  'Microsoft David',
+  'Microsoft Guy',
+  'Microsoft Ryan',
+  'Daniel',          // macOS/iOS en-GB male
+  'Fred',            // macOS legacy male
+  'Aaron',
+  'Arthur',
+  'Oliver',
+  'Google US English Male',
+  'Male'
+];
+
+function loadVoices() {
+  cachedVoices = speechSynth?.getVoices() || [];
+  populateVoiceDropdown();
+}
+loadVoices();
+if (speechSynth) speechSynth.addEventListener('voiceschanged', loadVoices);
+
+function pickDeepMaleVoice() {
+  if (!cachedVoices.length) loadVoices();
+  if (!cachedVoices.length) return null;
+
+  // 1) Exact/partial match against known deep male voice names
+  for (const hint of DEEP_MALE_VOICE_HINTS) {
+    const match = cachedVoices.find(v => v.name.toLowerCase().includes(hint.toLowerCase()));
+    if (match) return match;
+  }
+  // 2) Any English voice whose name suggests "male" explicitly
+  const maleEn = cachedVoices.find(v => /male/i.test(v.name) && !/female/i.test(v.name) && v.lang?.startsWith('en'));
+  if (maleEn) return maleEn;
+  // 3) Fall back to the first English voice available
+  return cachedVoices.find(v => v.lang?.startsWith('en')) || cachedVoices[0] || null;
+}
+
+function populateVoiceDropdown() {
+  const select = document.getElementById('tts-voice-select');
+  if (!select || !cachedVoices.length) return;
+
+  const currentVal = STATE.ttsVoiceName || 'auto';
+  select.innerHTML = '<option value="auto">Auto (Deep Male)</option>';
+
+  // English voices first, deep/male hints sorted to the top
+  const englishVoices = cachedVoices.filter(v => v.lang?.startsWith('en'));
+  const sorted = [...englishVoices].sort((a, b) => {
+    const aDeep = DEEP_MALE_VOICE_HINTS.some(h => a.name.toLowerCase().includes(h.toLowerCase()));
+    const bDeep = DEEP_MALE_VOICE_HINTS.some(h => b.name.toLowerCase().includes(h.toLowerCase()));
+    if (aDeep && !bDeep) return -1;
+    if (bDeep && !aDeep) return 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  sorted.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.name;
+    opt.textContent = v.name;
+    select.appendChild(opt);
+  });
+
+  select.value = currentVal;
+}
+
+window.setTTSVoice = function(name) {
+  STATE.ttsVoiceName = name;
+  localStorage.setItem('bv_tts_voice', name);
+};
+
+window.setTTSPitch = function(val) {
+  STATE.ttsPitch = parseFloat(val);
+  const label = document.getElementById('tts-pitch-label');
+  if (label) {
+    const v = parseFloat(val);
+    const desc = v <= 0.7 ? 'Deep' : v <= 1.0 ? 'Natural' : 'High';
+    label.textContent = `${desc} (${v.toFixed(2)})`;
+  }
+  localStorage.setItem('bv_tts_pitch', val);
+};
+
+window.setTTSRate = function(val) {
+  STATE.ttsRate = parseFloat(val);
+  const label = document.getElementById('tts-rate-label');
+  if (label) label.textContent = `${parseFloat(val).toFixed(2)}x`;
+  localStorage.setItem('bv_tts_rate', val);
+};
+
+function applyReaderVoice(utt) {
+  // Use the user's explicit voice choice if set, otherwise auto-pick deep male
+  let voice = null;
+  if (STATE.ttsVoiceName && STATE.ttsVoiceName !== 'auto') {
+    voice = cachedVoices.find(v => v.name === STATE.ttsVoiceName) || null;
+  }
+  if (!voice) voice = pickDeepMaleVoice();
+  if (voice) utt.voice = voice;
+  utt.pitch = STATE.ttsPitch ?? 0.65;
+  utt.rate  = STATE.ttsRate ?? 0.88;
+}
 
 window.toggleTTS = function() {
   if (STATE.ttsActive) {
@@ -3428,8 +3839,7 @@ function readVerses(verses) {
   verseEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 0.9;
-  utt.pitch = 1;
+  applyReaderVoice(utt);
   utt.onend = () => {
     STATE.ttsVerseIndex++;
     if (STATE.ttsActive) readVerses(verses);
@@ -3879,11 +4289,30 @@ window.closeSidebar = function() {
 window.openSettings  = function() { document.getElementById('settings-dialog-overlay')?.classList.add('show'); };
 window.closeSettings = function() { document.getElementById('settings-dialog-overlay')?.classList.remove('show'); };
 
+const THEME_COLORS = {
+  light:    '#f6fbf4',
+  dark:     '#0f1511',
+  midnight: '#000000',
+  sepia:    '#f5efe4',
+  forest:   '#eef5ea',
+  rose:     '#fff0f3',
+  ocean:    '#eaf6f8',
+  amoled:   '#000000'
+};
+
 window.setTheme = function(theme) {
   STATE.theme = theme;
   document.documentElement.setAttribute('data-theme', theme);
   document.querySelectorAll('.theme-option').forEach(el => el.classList.toggle('selected', el.dataset.theme === theme));
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[theme] || '#1a6b3c');
   localStorage.setItem('bv_theme', theme);
+};
+
+window.setFontFamily = function(font) {
+  STATE.fontFamily = font;
+  document.documentElement.setAttribute('data-font', font);
+  document.querySelectorAll('.font-option').forEach(el => el.classList.toggle('selected', el.dataset.font === font));
+  localStorage.setItem('bv_font_family', font);
 };
 
 window.setAccentColor = function(color) {
@@ -3923,17 +4352,25 @@ window.setRedLetter = function(on) {
 
 function loadSavedSettings() {
   const theme    = localStorage.getItem('bv_theme')      || 'light';
+  const font     = localStorage.getItem('bv_font_family')|| 'google-sans';
   const accent   = localStorage.getItem('bv_accent')     || '#1a6b3c';
   const scale    = localStorage.getItem('bv_type_scale') || '1';
   const weight   = localStorage.getItem('bv_font_weight')|| '400';
   const lineH    = localStorage.getItem('bv_line_height')|| '1.6';
   const redLtr   = localStorage.getItem('bv_red_letter') !== '0';
+  const ttsVoice = localStorage.getItem('bv_tts_voice')  || 'auto';
+  const ttsPitch = localStorage.getItem('bv_tts_pitch')  || '0.65';
+  const ttsRate  = localStorage.getItem('bv_tts_rate')   || '0.88';
 
   setTheme(theme);
+  setFontFamily(font);
   setAccentColor(accent);
   setTypeScale(scale);
   setFontWeight(weight);
   setLineHeight(lineH);
+  setTTSVoice(ttsVoice);
+  setTTSPitch(ttsPitch);
+  setTTSRate(ttsRate);
   STATE.redLetter = redLtr;
   document.getElementById('red-letter-toggle').checked = redLtr;
 
@@ -3942,6 +4379,9 @@ function loadSavedSettings() {
   document.getElementById('font-weight-slider').value = weight;
   document.getElementById('line-height-slider').value = lineH;
   document.getElementById('accent-picker').value      = accent;
+  document.getElementById('tts-pitch-slider').value   = ttsPitch;
+  document.getElementById('tts-rate-slider').value    = ttsRate;
+  populateVoiceDropdown();
 }
 
 // ================================================================
