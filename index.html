@@ -84,9 +84,11 @@
       --md-sys-color-on-secondary-container: #d1e8d8;
       --md-sys-color-tertiary:          #a3cdd9;
       --md-sys-color-on-tertiary:       #033546;
+      --md-sys-color-tertiary-container:#214d5c;
       --md-sys-color-on-tertiary-container: #bfe9fc;
       --md-sys-color-error:             #ffb4ab;
       --md-sys-color-on-error:          #690005;
+      --md-sys-color-error-container:   #93000a;
       --md-sys-color-background:        #0f1511;
       --md-sys-color-on-background:     #dfe4dd;
       --md-sys-color-surface:           #0f1511;
@@ -121,6 +123,15 @@
       --md-sys-color-on-primary-container: #d4e3ff;
       --md-sys-color-secondary:         #bec6dc;
       --md-sys-color-on-secondary:      #283041;
+      --md-sys-color-secondary-container: #3e4759;
+      --md-sys-color-on-secondary-container: #dae2f9;
+      --md-sys-color-tertiary:          #dbbce4;
+      --md-sys-color-on-tertiary:       #3f2847;
+      --md-sys-color-tertiary-container: #573e5f;
+      --md-sys-color-on-tertiary-container: #f8d8ff;
+      --md-sys-color-error:             #ffb4ab;
+      --md-sys-color-on-error:          #690005;
+      --md-sys-color-error-container:   #93000a;
       --md-sys-color-background:        #000000;
       --md-sys-color-on-background:     #e2e2e9;
       --md-sys-color-surface:           #05050f;
@@ -136,6 +147,7 @@
       --md-sys-color-surface-container-highest: #2f2f40;
       --md-sys-color-inverse-surface:   #e2e2e9;
       --md-sys-color-inverse-on-surface:#2e2f38;
+      --md-sys-color-inverse-primary:   #2b5fad;
       --md-sys-color-scrim:             rgba(0,0,0,0.85);
       --md-sys-color-divine-words:      #ff8a80;
       --md-sys-color-praise-gold:       #ffd740;
@@ -154,6 +166,15 @@
       --md-sys-color-on-primary-container: #2b1700;
       --md-sys-color-secondary:         #6f5b45;
       --md-sys-color-on-secondary:      #ffffff;
+      --md-sys-color-secondary-container: #ecdfc8;
+      --md-sys-color-on-secondary-container: #251a09;
+      --md-sys-color-tertiary:          #56633a;
+      --md-sys-color-on-tertiary:       #ffffff;
+      --md-sys-color-tertiary-container: #d8e8b2;
+      --md-sys-color-on-tertiary-container: #151e02;
+      --md-sys-color-error:             #ba1a1a;
+      --md-sys-color-on-error:          #ffffff;
+      --md-sys-color-error-container:   #ffdad6;
       --md-sys-color-background:        #f5efe4;
       --md-sys-color-on-background:     #201b14;
       --md-sys-color-surface:           #f5efe4;
@@ -168,6 +189,8 @@
       --md-sys-color-surface-container-high:    #e1d7bf;
       --md-sys-color-surface-container-highest: #dbd1b9;
       --md-sys-color-inverse-surface:   #352e21;
+      --md-sys-color-inverse-on-surface:#fbefdf;
+      --md-sys-color-inverse-primary:   #e9bf8c;
       --md-sys-color-scrim:             rgba(50,30,10,0.5);
       --md-sys-color-divine-words:      #8b1a1a;
       --md-sys-color-praise-gold:       #c17900;
@@ -285,7 +308,7 @@
       border-bottom: 1px solid var(--md-sys-color-outline-variant);
       display: flex;
       align-items: center;
-      padding: 0 8px 0 4px;
+      padding: 0 12px;
       gap: 4px;
       flex-shrink: 0;
       z-index: 50;
@@ -433,17 +456,19 @@
     .btn-sm { padding: 6px 16px; font-size: var(--md-sys-typescale-label-medium); }
     .btn-icon {
       width: 40px; height: 40px;
-      padding: 0; border-radius: 50%;
+      padding: 0; border-radius: var(--md-sys-shape-corner-medium);
       background: transparent;
       color: var(--md-sys-color-on-surface-variant);
+      transition: background 0.15s, color 0.15s;
     }
-    .btn-icon:hover { background: var(--md-sys-color-surface-container-high); }
+    .btn-icon:hover { background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent); }
+    .btn-icon:active { background: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent); }
     .btn-icon.active { color: var(--md-sys-color-primary); }
     .btn-icon-filled {
       background: var(--md-sys-color-primary);
       color: var(--md-sys-color-on-primary);
       width: 40px; height: 40px;
-      padding: 0; border-radius: 50%;
+      padding: 0; border-radius: var(--md-sys-shape-corner-medium);
     }
 
     /* --- FAB --- */
@@ -552,7 +577,7 @@
     /* --- Switch --- */
     .switch {
       position: relative;
-      width: 52px; height: 32px;
+      width: 44px; height: 26px;
       flex-shrink: 0;
     }
     .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
@@ -560,9 +585,9 @@
       position: absolute;
       inset: 0;
       background: var(--md-sys-color-surface-variant);
-      border-radius: 16px;
-      border: 2px solid var(--md-sys-color-outline);
-      transition: all 0.2s;
+      border-radius: 999px;
+      border: 1.5px solid var(--md-sys-color-outline);
+      transition: background 0.2s cubic-bezier(0.2,0,0,1), border-color 0.2s cubic-bezier(0.2,0,0,1);
       cursor: pointer;
     }
     .switch input:checked + .switch-track {
@@ -571,18 +596,17 @@
     }
     .switch-thumb {
       position: absolute;
-      top: 50%; left: 6px;
+      top: 50%; left: 3px;
       transform: translateY(-50%);
-      width: 16px; height: 16px;
+      width: 19px; height: 19px;
       background: var(--md-sys-color-outline);
       border-radius: 50%;
-      transition: all 0.2s cubic-bezier(0.2,0,0,1);
+      transition: left 0.2s cubic-bezier(0.2,0,0,1), background 0.2s cubic-bezier(0.2,0,0,1);
       pointer-events: none;
     }
     .switch input:checked ~ .switch-thumb {
-      left: 28px;
+      left: 21px;
       background: var(--md-sys-color-on-primary);
-      width: 24px; height: 24px;
       top: 50%; transform: translateY(-50%);
     }
 
@@ -695,21 +719,28 @@
       position: fixed;
       bottom: calc(var(--nav-bar-height) + var(--safe-bottom) + 16px);
       left: 50%;
-      transform: translateX(-50%) translateY(100px);
+      transform: translateX(-50%) translateY(12px) scale(0.95);
+      opacity: 0;
+      visibility: hidden;
       background: var(--md-sys-color-inverse-surface);
       color: var(--md-sys-color-inverse-on-surface);
       padding: 12px 20px;
-      border-radius: var(--md-sys-shape-corner-extra-small);
+      border-radius: var(--md-sys-shape-corner-medium);
       font-size: var(--md-sys-typescale-body-medium);
       z-index: 700;
       box-shadow: var(--md-sys-elevation-3);
-      transition: transform 0.3s cubic-bezier(0.2,0,0,1);
+      transition: transform 0.22s cubic-bezier(0.2,0,0,1), opacity 0.22s cubic-bezier(0.2,0,0,1), visibility 0.22s;
       min-width: 200px;
       max-width: calc(100vw - 48px);
       text-align: center;
-      white-space: nowrap;
+      pointer-events: none;
     }
-    #snackbar.show { transform: translateX(-50%) translateY(0); }
+    #snackbar.show {
+      transform: translateX(-50%) translateY(0) scale(1);
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
 
     @media(min-width:840px) {
       #snackbar { bottom: 24px; }
@@ -725,7 +756,12 @@
       color: var(--md-sys-color-on-surface);
       flex: 1;
     }
-    .top-bar-actions { display: flex; align-items: center; gap: 4px; }
+    .top-bar-actions { display: flex; align-items: center; gap: 6px; }
+    #topbar-install-btn { padding: 8px 14px 8px 12px; gap: 6px; }
+    @media (max-width: 380px) {
+      #topbar-install-btn .install-btn-label { display: none; }
+      #topbar-install-btn { padding: 8px; border-radius: 50%; width: 36px; height: 36px; gap: 0; }
+    }
 
     /* Desktop nav tabs */
     #desktop-nav {
@@ -1001,33 +1037,36 @@
       margin-bottom: 24px;
       color: var(--md-sys-color-on-surface);
     }
-    .verse {
-      display: flex;
-      gap: 8px;
-      padding: 6px 8px;
-      border-radius: var(--md-sys-shape-corner-small);
+    .chapter-text {
       line-height: var(--line-height-base);
-      transition: background 0.15s;
+      font-size: var(--md-sys-typescale-body-large);
+      color: var(--md-sys-color-on-surface);
+    }
+    .verse {
+      display: inline;
       cursor: default;
-      margin-bottom: 2px;
+      border-radius: 4px;
+      padding: 2px 1px;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      transition: background 0.15s;
     }
     .verse:hover { background: var(--md-sys-color-surface-container-high); }
     .verse.study-mode {
       cursor: pointer;
-      border-bottom: 1px dashed var(--md-sys-color-outline-variant);
     }
     .verse.study-mode:hover { background: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent); }
     .verse.reading-active { background: color-mix(in srgb, var(--md-sys-color-tertiary) 20%, transparent); }
+    .verse.selected { background: color-mix(in srgb, var(--md-sys-color-primary) 16%, transparent); }
     .verse-num {
-      font-size: var(--md-sys-typescale-label-small);
+      font-size: 0.68em;
       color: var(--md-sys-color-primary);
       font-weight: 700;
-      min-width: 22px;
-      padding-top: 3px;
-      flex-shrink: 0;
+      vertical-align: super;
+      margin-right: 2px;
+      user-select: none;
     }
     .verse-text {
-      font-size: var(--md-sys-typescale-body-large);
       color: var(--md-sys-color-on-surface);
     }
     .verse-text.divine { color: var(--md-sys-color-divine-words); font-weight: 500; }
@@ -1064,18 +1103,27 @@
     }
 
     /* Page flip animation */
-    @keyframes pageFlipRight {
-      0%   { transform: perspective(1000px) rotateY(0deg); opacity: 1; }
-      50%  { transform: perspective(1000px) rotateY(-15deg); opacity: 0.5; }
-      100% { transform: perspective(1000px) rotateY(0deg); opacity: 1; }
+    @keyframes pageSlideOutLeft {
+      0%   { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(-32px); opacity: 0; }
     }
-    @keyframes pageFlipLeft {
-      0%   { transform: perspective(1000px) rotateY(0deg); opacity: 1; }
-      50%  { transform: perspective(1000px) rotateY(15deg); opacity: 0.5; }
-      100% { transform: perspective(1000px) rotateY(0deg); opacity: 1; }
+    @keyframes pageSlideOutRight {
+      0%   { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(32px); opacity: 0; }
     }
-    .flip-right { animation: pageFlipRight 0.4s ease; }
-    .flip-left  { animation: pageFlipLeft 0.4s ease; }
+    @keyframes pageSlideInLeft {
+      0%   { transform: translateX(32px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes pageSlideInRight {
+      0%   { transform: translateX(-32px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    .flip-out-left   { animation: pageSlideOutLeft  0.16s cubic-bezier(0.3,0,1,1) forwards; }
+    .flip-out-right  { animation: pageSlideOutRight 0.16s cubic-bezier(0.3,0,1,1) forwards; }
+    .flip-in-left    { animation: pageSlideInLeft   0.22s cubic-bezier(0.2,0,0,1) forwards; }
+    .flip-in-right   { animation: pageSlideInRight  0.22s cubic-bezier(0.2,0,0,1) forwards; }
+    #chapter-display { will-change: transform, opacity; }
 
     /* ============================================================
        STUDY / COMMENTARY PANEL (Right Panel)
@@ -1737,6 +1785,11 @@
       </nav>
 
       <div class="top-bar-actions">
+        <!-- Install App (shown only when installable & not installed) -->
+        <button class="btn btn-tonal btn-sm hidden" id="topbar-install-btn" onclick="triggerInstall()" aria-label="Install app">
+          <span class="material-icons-round" style="font-size:18px">install_mobile</span>
+          <span class="install-btn-label">Install</span>
+        </button>
         <!-- Offline Indicator -->
         <div id="offline-indicator" class="online">
           <span class="material-icons-round">cloud_done</span>
@@ -1829,13 +1882,7 @@
           <!-- Reader Toolbar -->
           <div id="reader-toolbar">
             <div class="chapter-nav">
-              <button class="btn-icon" onclick="navigateChapter(-1)" aria-label="Previous chapter">
-                <span class="material-icons-round">chevron_left</span>
-              </button>
               <div class="chapter-label" id="chapter-label">Genesis 1</div>
-              <button class="btn-icon" onclick="navigateChapter(1)" aria-label="Next chapter">
-                <span class="material-icons-round">chevron_right</span>
-              </button>
             </div>
 
             <!-- Version Selector -->
@@ -1847,16 +1894,10 @@
             </select>
 
             <!-- Study Mode -->
-            <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
-              <span style="font-size:var(--md-sys-typescale-label-medium);font-weight:500;color:var(--md-sys-color-on-surface-variant);">
-                <span class="hidden" id="study-label-desktop" style="display:none">Study</span>
-              </span>
-              <label class="switch" title="Toggle Deep Study Mode">
-                <input type="checkbox" id="study-mode-toggle" onchange="toggleStudyMode(this.checked)" />
-                <div class="switch-track"></div>
-                <div class="switch-thumb"></div>
-              </label>
-              <span class="material-icons-round text-primary" style="font-size:18px;" title="Deep Study Mode">psychology</span>
+            <div style="display:flex;align-items:center;margin-left:auto;">
+              <button class="btn-icon" id="study-mode-btn" onclick="toggleStudyMode(!STATE.studyMode)" aria-label="Toggle Deep Study Mode" aria-pressed="false" title="Deep Study Mode">
+                <span class="material-icons-round" id="study-mode-icon" style="font-size:20px;">psychology</span>
+              </button>
             </div>
 
             <!-- Parallel Mode (desktop) -->
@@ -2097,7 +2138,7 @@
      HIGHLIGHT TOOLBAR (floating)
 ============================================================ -->
 <div id="highlight-toolbar">
-  <span style="font-size:var(--md-sys-typescale-label-small);color:var(--md-sys-color-on-surface-variant);font-weight:500;">Highlight</span>
+  <span id="highlight-toolbar-label" style="font-size:var(--md-sys-typescale-label-small);color:var(--md-sys-color-on-surface-variant);font-weight:500;">Highlight</span>
   <div class="hl-dot yellow" onclick="applyHighlight('hl-yellow')" title="Yellow"></div>
   <div class="hl-dot mint"   onclick="applyHighlight('hl-mint')"   title="Mint"></div>
   <div class="hl-dot blue"   onclick="applyHighlight('hl-blue')"   title="Blue"></div>
@@ -2352,7 +2393,8 @@ const STATE = {
   studyMode:      false,
   parallelMode:   false,
   redLetter:      true,
-  selectedVerse:  null,
+  selectedVerses: new Set(),
+  navInProgress:  false,
   ttsActive:      false,
   ttsUtterance:   null,
   ttsVerseIndex:  0,
@@ -2838,19 +2880,17 @@ function renderChapter() {
   } else {
     const divineWords = window.BIBLE_DATA.divineWords?.[book]?.[ch] || [];
     const hlMap = STATE.highlights;
+    const selectedSet = STATE.selectedVerses || new Set();
 
-    html += chapterData.map(({v, t}) => {
-      const isDivine  = STATE.redLetter && divineWords.includes(v);
-      const hlClass   = hlMap[`${book}-${ch}-${v}`] || '';
-      const studyCls  = STATE.studyMode ? 'study-mode' : '';
-      return `
-        <div class="verse ${hlClass} ${studyCls}" id="verse-${v}"
+    html += `<p class="chapter-text">` + chapterData.map(({v, t}) => {
+      const isDivine   = STATE.redLetter && divineWords.includes(v);
+      const hlClass    = hlMap[`${book}-${ch}-${v}`] || '';
+      const studyCls   = STATE.studyMode ? 'study-mode' : '';
+      const selectCls  = selectedSet.has(v) ? 'selected' : '';
+      return `<span class="verse ${hlClass} ${studyCls} ${selectCls}" id="verse-${v}"
              data-verse="${v}" data-book="${book}" data-ch="${ch}"
-             onclick="onVerseClick(${v}, event)">
-          <span class="verse-num">${v}</span>
-          <span class="verse-text ${isDivine ? 'divine' : ''}">${t}</span>
-        </div>`;
-    }).join('');
+             onclick="onVerseClick(${v}, event)"><span class="verse-num">${v}</span><span class="verse-text ${isDivine ? 'divine' : ''}">${t}</span> </span>`;
+    }).join('') + `</p>`;
   }
 
   html += `</div>`;
@@ -2873,13 +2913,10 @@ function renderParallel() {
   const getData = (v) => window.BIBLE_DATA.versions[v]?.books?.[book]?.chapters?.[ch] || [];
   const renderVerses = (vdata, ver, divWords) => {
     if (!vdata.length) return '<p class="text-muted text-sm">Chapter not available in this sample.</p>';
-    return vdata.map(({v,t}) => {
+    return `<p class="chapter-text">` + vdata.map(({v,t}) => {
       const isDivine = STATE.redLetter && divWords.includes(v);
-      return `<div class="verse" data-verse="${v}">
-        <span class="verse-num">${v}</span>
-        <span class="verse-text ${isDivine?'divine':''}">${t}</span>
-      </div>`;
-    }).join('');
+      return `<span class="verse" data-verse="${v}"><span class="verse-num">${v}</span><span class="verse-text ${isDivine?'divine':''}">${t}</span> </span>`;
+    }).join('') + `</p>`;
   };
 
   const divWords = window.BIBLE_DATA.divineWords?.[book]?.[ch] || [];
@@ -2905,41 +2942,52 @@ function renderParallel() {
 //  CHAPTER NAVIGATION
 // ================================================================
 function navigateChapter(dir) {
-  if (!window.BIBLE_DATA) return;
+  if (!window.BIBLE_DATA || STATE.navInProgress) return;
 
   const meta = window.BIBLE_DATA.bookMeta[STATE.currentBook];
   const maxCh = meta?.chapters || 1;
   const newCh  = STATE.currentChapter + dir;
+  const books = window.BIBLE_DATA.allBooks;
+  const idx   = books.indexOf(STATE.currentBook);
+
+  // Guard: already at the very first or very last chapter of the Bible
+  if (newCh < 1 && idx <= 0) { showSnackbar("You're at the beginning."); return; }
+  if (newCh > maxCh && idx >= books.length - 1) { showSnackbar("You're at the end."); return; }
 
   const container = document.getElementById('chapter-display');
-  container?.classList.add(dir > 0 ? 'flip-right' : 'flip-left');
-  setTimeout(() => container?.classList.remove('flip-right','flip-left'), 450);
+  STATE.navInProgress = true;
 
-  if (newCh < 1) {
-    // Go to previous book
-    const books = window.BIBLE_DATA.allBooks;
-    const idx = books.indexOf(STATE.currentBook);
-    if (idx > 0) {
+  const finishNavigation = () => {
+    if (newCh < 1) {
       STATE.currentBook    = books[idx - 1];
       STATE.currentChapter = window.BIBLE_DATA.bookMeta[STATE.currentBook].chapters;
-    }
-  } else if (newCh > maxCh) {
-    // Go to next book
-    const books = window.BIBLE_DATA.allBooks;
-    const idx = books.indexOf(STATE.currentBook);
-    if (idx < books.length - 1) {
+    } else if (newCh > maxCh) {
       STATE.currentBook    = books[idx + 1];
       STATE.currentChapter = 1;
+    } else {
+      STATE.currentChapter = newCh;
     }
+
+    renderChapter();
+    container?.classList.remove('flip-out-left','flip-out-right');
+    container?.classList.add(dir > 0 ? 'flip-in-left' : 'flip-in-right');
+
+    // Update sidebar highlight
+    document.querySelectorAll('.book-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('book-item-' + STATE.currentBook.replace(/\s/g,'-'))?.classList.add('active');
+
+    setTimeout(() => {
+      container?.classList.remove('flip-in-left','flip-in-right');
+      STATE.navInProgress = false;
+    }, 240);
+  };
+
+  if (container) {
+    container.classList.add(dir > 0 ? 'flip-out-left' : 'flip-out-right');
+    setTimeout(finishNavigation, 160);
   } else {
-    STATE.currentChapter = newCh;
+    finishNavigation();
   }
-
-  renderChapter();
-
-  // Update sidebar highlight
-  document.querySelectorAll('.book-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('book-item-' + STATE.currentBook.replace(/\s/g,'-'))?.classList.add('active');
 }
 
 window.navigateChapter = navigateChapter;
@@ -2947,22 +2995,67 @@ window.navigateChapter = navigateChapter;
 // ================================================================
 //  TOUCH SWIPE GESTURES
 // ================================================================
-let touchStartX = 0, touchStartY = 0;
+let touchStartX = 0, touchStartY = 0, touchCurX = 0, isDragging = false, swipeAxisLocked = null;
+const SWIPE_THRESHOLD = 70;
 
-document.getElementById('reader-content')?.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
+const readerEl = document.getElementById('reader-content');
+const swipeTarget = document.getElementById('chapter-display');
+
+readerEl?.addEventListener('touchstart', e => {
+  if (STATE.navInProgress) return;
+  touchStartX = touchCurX = e.touches[0].clientX;
   touchStartY = e.touches[0].clientY;
+  isDragging = true;
+  swipeAxisLocked = null;
+  if (swipeTarget) swipeTarget.style.transition = 'none';
 }, { passive: true });
 
-document.getElementById('reader-content')?.addEventListener('touchend', e => {
+readerEl?.addEventListener('touchmove', e => {
+  if (!isDragging || STATE.navInProgress) return;
+  touchCurX = e.touches[0].clientX;
+  const dx = touchCurX - touchStartX;
+  const dy = e.touches[0].clientY - touchStartY;
+
+  // Lock to an axis early so a vertical scroll doesn't get hijacked as a swipe
+  if (swipeAxisLocked === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+    swipeAxisLocked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+  }
+  if (swipeAxisLocked !== 'x') return;
+
+  // Live drag-follow, eased and capped so it feels responsive but bounded
+  if (swipeTarget) {
+    const damped = Math.max(-120, Math.min(120, dx * 0.5));
+    swipeTarget.style.transform = `translateX(${damped}px)`;
+    swipeTarget.style.opacity = String(1 - Math.min(0.5, Math.abs(damped) / 240));
+  }
+}, { passive: true });
+
+readerEl?.addEventListener('touchend', e => {
+  if (!isDragging) return;
+  isDragging = false;
+
+  if (swipeTarget) {
+    swipeTarget.style.transition = 'transform 0.18s cubic-bezier(0.2,0,0,1), opacity 0.18s cubic-bezier(0.2,0,0,1)';
+    swipeTarget.style.transform = '';
+    swipeTarget.style.opacity = '';
+  }
+
   // SAFETY: Ignore if text is selected
   if (window.getSelection().toString().length > 0) return;
+  if (swipeAxisLocked !== 'x') return;
 
   const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 60) {
+  if (Math.abs(dx) > SWIPE_THRESHOLD) {
     navigateChapter(dx < 0 ? 1 : -1); // swipe left = next, swipe right = prev
+  }
+}, { passive: true });
+
+readerEl?.addEventListener('touchcancel', () => {
+  isDragging = false;
+  if (swipeTarget) {
+    swipeTarget.style.transition = 'transform 0.18s cubic-bezier(0.2,0,0,1), opacity 0.18s cubic-bezier(0.2,0,0,1)';
+    swipeTarget.style.transform = '';
+    swipeTarget.style.opacity = '';
   }
 }, { passive: true });
 
@@ -2979,6 +3072,11 @@ document.addEventListener('keydown', e => {
 // ================================================================
 window.toggleStudyMode = function(on) {
   STATE.studyMode = on;
+  const btn = document.getElementById('study-mode-btn');
+  if (btn) {
+    btn.classList.toggle('active', on);
+    btn.setAttribute('aria-pressed', String(on));
+  }
   showSnackbar(on ? '📖 Deep Study Mode ON — click any verse' : 'Study Mode OFF');
   renderChapter();
 };
@@ -2989,21 +3087,41 @@ window.onVerseClick = function(verseNum, event) {
 
   if (STATE.studyMode) {
     openVerseCommentary(STATE.currentBook, STATE.currentChapter, verseNum);
-  } else {
-    STATE.selectedVerse = verseNum;
-    // Show highlight toolbar
-    const toolbar = document.getElementById('highlight-toolbar');
-    const vEl = document.getElementById(`verse-${verseNum}`);
-    if (toolbar && vEl) {
-      const rect = vEl.getBoundingClientRect();
-      toolbar.style.top  = (rect.bottom + window.scrollY + 8) + 'px';
-      toolbar.style.left = Math.min(rect.left, window.innerWidth - 300) + 'px';
-      toolbar.classList.add('show');
-    }
+    return;
   }
+
+  // Toggle this verse in/out of the active multi-selection
+  const sel = STATE.selectedVerses;
+  const vEl = document.getElementById(`verse-${verseNum}`);
+  if (sel.has(verseNum)) {
+    sel.delete(verseNum);
+    vEl?.classList.remove('selected');
+  } else {
+    sel.add(verseNum);
+    vEl?.classList.add('selected');
+  }
+
+  const toolbar = document.getElementById('highlight-toolbar');
+  if (!toolbar) return;
+
+  if (sel.size === 0) {
+    toolbar.classList.remove('show');
+    return;
+  }
+
+  const label = document.getElementById('highlight-toolbar-label');
+  if (label) label.textContent = sel.size > 1 ? `Highlight (${sel.size})` : 'Highlight';
+
+  // Anchor toolbar near the most recently tapped verse
+  if (vEl) {
+    const rect = vEl.getBoundingClientRect();
+    toolbar.style.top  = (rect.bottom + window.scrollY + 8) + 'px';
+    toolbar.style.left = Math.min(rect.left, window.innerWidth - 300) + 'px';
+  }
+  toolbar.classList.add('show');
 };
 
-// Click away = hide highlight toolbar
+// Click away = hide highlight toolbar and clear selection
 document.addEventListener('click', e => {
   if (!e.target.closest('#highlight-toolbar') && !e.target.closest('.verse')) {
     hideHighlightToolbar();
@@ -3012,7 +3130,8 @@ document.addEventListener('click', e => {
 
 window.hideHighlightToolbar = function() {
   document.getElementById('highlight-toolbar')?.classList.remove('show');
-  STATE.selectedVerse = null;
+  STATE.selectedVerses.forEach(v => document.getElementById(`verse-${v}`)?.classList.remove('selected'));
+  STATE.selectedVerses.clear();
 };
 
 // ================================================================
@@ -3090,7 +3209,6 @@ function openVerseCommentary(book, ch, verse) {
 
 window.openNoteDialogForVerse = function(book, ch, verse) {
   closeBottomSheet();
-  STATE.selectedVerse = verse;
   openNoteDialogWith(`${book} ${ch}:${verse}`);
 };
 
@@ -3124,32 +3242,52 @@ window.closeRightPanel = function() {
 //  HIGHLIGHT & NOTE
 // ================================================================
 window.applyHighlight = function(cls) {
-  if (STATE.selectedVerse === null) return;
-  const key = `${STATE.currentBook}-${STATE.currentChapter}-${STATE.selectedVerse}`;
-  STATE.highlights[key] = cls;
+  if (STATE.selectedVerses.size === 0) return;
+  STATE.selectedVerses.forEach(v => {
+    const key = `${STATE.currentBook}-${STATE.currentChapter}-${v}`;
+    STATE.highlights[key] = cls;
+  });
+  const count = STATE.selectedVerses.size;
   saveLocalData();
-  renderChapter();
   hideHighlightToolbar();
-  showSnackbar('Highlight applied!');
+  renderChapter();
+  showSnackbar(count > 1 ? `Highlighted ${count} verses!` : 'Highlight applied!');
 };
 
 window.clearHighlight = function() {
-  if (STATE.selectedVerse === null) return;
-  const key = `${STATE.currentBook}-${STATE.currentChapter}-${STATE.selectedVerse}`;
-  delete STATE.highlights[key];
+  if (STATE.selectedVerses.size === 0) return;
+  STATE.selectedVerses.forEach(v => {
+    const key = `${STATE.currentBook}-${STATE.currentChapter}-${v}`;
+    delete STATE.highlights[key];
+  });
   saveLocalData();
-  renderChapter();
   hideHighlightToolbar();
+  renderChapter();
   showSnackbar('Highlight removed.');
 };
+
+function formatVerseRange(verses) {
+  const sorted = [...verses].sort((a,b) => a - b);
+  if (sorted.length === 1) return `${sorted[0]}`;
+  // Collapse consecutive runs into ranges, e.g. 16,17,18,20 -> 16-18,20
+  const parts = [];
+  let start = sorted[0], prev = sorted[0];
+  for (let i = 1; i <= sorted.length; i++) {
+    const cur = sorted[i];
+    if (cur === prev + 1) { prev = cur; continue; }
+    parts.push(start === prev ? `${start}` : `${start}-${prev}`);
+    start = prev = cur;
+  }
+  return parts.join(',');
+}
 
 window.openNoteDialog = function() {
   const book = STATE.currentBook;
   const ch   = STATE.currentChapter;
-  const v    = STATE.selectedVerse;
-  if (v === null) { showSnackbar('Click a verse first.'); return; }
+  if (STATE.selectedVerses.size === 0) { showSnackbar('Click a verse first.'); return; }
+  const range = formatVerseRange(STATE.selectedVerses);
   hideHighlightToolbar();
-  openNoteDialogWith(`${book} ${ch}:${v}`);
+  openNoteDialogWith(`${book} ${ch}:${range}`);
 };
 
 function openNoteDialogWith(ref) {
@@ -3170,7 +3308,9 @@ window.saveNote = function() {
   const isPublic = document.getElementById('note-public-toggle').checked;
   const book = STATE.currentBook;
   const ch   = STATE.currentChapter;
-  const v    = STATE.selectedVerse ?? 1;
+  // Parse the leading verse number out of the ref (e.g. "John 3:16-18" -> 16)
+  const firstVerseMatch = refText.match(/:(\d+)/);
+  const v    = firstVerseMatch ? parseInt(firstVerseMatch[1], 10) : 1;
   const key  = `${book}-${ch}-${v}`;
 
   STATE.notes[key] = { text, ref: refText, public: isPublic, ts: new Date().toISOString() };
@@ -3823,11 +3963,20 @@ window.saveProfile = async function() {
 // ================================================================
 //  PWA INSTALL
 // ================================================================
+function showTopbarInstallBtn() {
+  if (STATE.isInstalled) return;
+  document.getElementById('topbar-install-btn')?.classList.remove('hidden');
+}
+function hideTopbarInstallBtn() {
+  document.getElementById('topbar-install-btn')?.classList.add('hidden');
+}
+
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   STATE.deferredInstall = e;
   document.getElementById('install-banner')?.classList.add('show');
   document.getElementById('profile-install-chip')?.classList.remove('hidden');
+  showTopbarInstallBtn();
 });
 
 window.addEventListener('appinstalled', () => {
@@ -3835,24 +3984,44 @@ window.addEventListener('appinstalled', () => {
   STATE.deferredInstall = null;
   document.getElementById('install-banner')?.classList.remove('show');
   document.getElementById('profile-install-chip')?.classList.add('hidden');
+  hideTopbarInstallBtn();
   showSnackbar('BibleVault installed! 🎉');
 });
 
+function isIOSSafari() {
+  const ua = navigator.userAgent || '';
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || (ua.includes('Macintosh') && navigator.maxTouchPoints > 1);
+  const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+  return isIOS && isSafari;
+}
+
 function checkPWAInstallStatus() {
-  if (window.matchMedia('(display-mode: standalone)').matches) {
+  if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true) {
     STATE.isInstalled = true;
+    hideTopbarInstallBtn();
+    return;
+  }
+  // iOS Safari never fires beforeinstallprompt — still offer the button
+  // with manual instructions so the install path isn't hidden entirely.
+  if (isIOSSafari()) {
+    showTopbarInstallBtn();
   }
 }
 
 window.triggerInstall = async function() {
   if (!STATE.deferredInstall) {
-    showSnackbar('To install: use your browser menu → "Add to Home Screen".');
+    if (isIOSSafari()) {
+      showSnackbar('Tap the Share icon, then "Add to Home Screen".');
+    } else {
+      showSnackbar('To install: use your browser menu → "Add to Home Screen".');
+    }
     return;
   }
   STATE.deferredInstall.prompt();
   const result = await STATE.deferredInstall.userChoice;
   if (result.outcome === 'accepted') showSnackbar('Installing BibleVault…');
   STATE.deferredInstall = null;
+  hideTopbarInstallBtn();
 };
 
 document.getElementById('install-btn')?.addEventListener('click', () => window.triggerInstall());
@@ -3958,12 +4127,14 @@ window.addEventListener('hashchange', () => handleHashRoute(window.location.hash
 // ================================================================
 //  UTILITY
 // ================================================================
+let _snackbarTimer = null;
 function showSnackbar(msg, duration = 3000) {
   const sb = document.getElementById('snackbar');
   if (!sb) return;
   sb.textContent = msg;
   sb.classList.add('show');
-  setTimeout(() => sb.classList.remove('show'), duration);
+  if (_snackbarTimer) clearTimeout(_snackbarTimer);
+  _snackbarTimer = setTimeout(() => sb.classList.remove('show'), duration);
 }
 window.showSnackbar = showSnackbar;
 
